@@ -1,0 +1,1101 @@
+# Terminal Full Output
+# Terminal: default
+# Command: python3 - <<'PY'
+from zipfile import ZipFile
+from pathlib import PurePosixPath
+from collections import Counter
+import os, shutil
+zpath='/tmp/savageclash-input/source.zip'
+out='/tmp/savageclash-input/unpacked'
+os.makedirs(out, exist_ok=True)
+with ZipFile(zpath) as z:
+    infos=z.infolist()
+    bad=[]
+    for i in infos:
+        p=PurePosixPath(i.filename)
+        if p.is_absolute() or '..' in p.parts or (p.parts and ':' in p.parts[0]): bad.append(i.filename)
+    print('members',len(infos),'total uncompressed bytes',sum(i.file_size for i in infos),'unsafe paths',bad[:10])
+    print('extension counts',Counter(PurePosixPath(i.filename).suffix.lower() or '<none>' for i in infos).most_common(25))
+    print('top-level dirs',sorted({PurePosixPath(i.filename).parts[0] for i in infos if PurePosixPath(i.filename).parts}))
+    for name in ['README.md','NOTES.md','CREDITS.md','package.json','vite.config.ts','src/main.ts','src/game/game.ts','src/game/config.ts']:
+        try:
+            data=z.read(name)
+        except KeyError:
+            continue
+        target=os.path.join(out, name)
+        os.makedirs(os.path.dirname(target),exist_ok=True)
+        with open(target,'wb') as f:f.write(data)
+        print(f'\n===== {name} ({len(data)} bytes) =====')
+        if name.endswith(('.md','.json','.ts')) and len(data)<60000:
+            print(data.decode('utf-8','replace')[:18000])
+    print('\n-- source-ish file paths --')
+    for i in infos:
+        n=i.filename
+        if n.startswith(('src/','scripts/','tests/')) and not n.startswith(('src/assets/','src/art/')):
+            print(n, i.file_size)
+PY
+# PID: 1153
+# Timestamp: 2026-10-24_09-14-30.436441
+# Original Length: 59539 characters
+# ----------------------------------------
+
+[32mubuntu@sandbox:~/savageclash$ [0mpython3 - <<'PY'
+from zipfile import ZipFile
+from pathlib import PurePosixPath
+from collections import Counter
+import os, shutil
+zpath='/tmp/savageclash-input/source.zip'
+out='/tmp/savageclash-input/unpacked'
+os.makedirs(out, exist_ok=True)
+with ZipFile(zpath) as z:
+    infos=z.infolist()
+    bad=[]
+    for i in infos:
+        p=PurePosixPath(i.filename)
+        if p.is_absolute() or '..' in p.parts or (p.parts and ':' in p.parts[0]): bad.append(i.filename)
+    print('members',len(infos),'total uncompressed bytes',sum(i.file_size for i in infos),'unsafe paths',bad[:10])
+    print('extension counts',Counter(PurePosixPath(i.filename).suffix.lower() or '<none>' for i in infos).most_common(25))
+    print('top-level dirs',sorted({PurePosixPath(i.filename).parts[0] for i in infos if PurePosixPath(i.filename).parts}))
+    for name in ['README.md','NOTES.md','CREDITS.md','package.json','vite.config.ts','src/main.ts','src/game/game.ts','src/game/config.ts']:
+        try:
+            data=z.read(name)
+        except KeyError:
+            continue
+        target=os.path.join(out, name)
+        os.makedirs(os.path.dirname(target),exist_ok=True)
+        with open(target,'wb') as f:f.write(data)
+        print(f'\n===== {name} ({len(data)} bytes) =====')
+        if name.endswith(('.md','.json','.ts')) and len(data)<60000:
+            print(data.decode('utf-8','replace')[:18000])
+    print('\n-- source-ish file paths --')
+    for i in infos:
+        n=i.filename
+        if n.startswith(('src/','scripts/','tests/')) and not n.startswith(('src/assets/','src/art/')):
+            print(n, i.file_size)
+PY
+members 496 total uncompressed bytes 587897580 unsafe paths []
+extension counts [('.mp3', 109), ('.png', 108), ('.webp', 59), ('.glb', 58), ('.ts', 42), ('.mjs', 30), ('.jpg', 18), ('.bin', 17), ('.gltf', 15), ('.json', 12), ('.md', 6), ('.txt', 5), ('.html', 4), ('.js', 3), ('.css', 3), ('.woff2', 2), ('.py', 2), ('<none>', 1), ('.yaml', 1), ('.mts', 1)]
+top-level dirs ['.gitignore', '.manus-starter-init.json', '.manus-webdev', 'CREDITS.md', 'NOTES.md', 'README.md', 'art', 'assets', 'docs', 'enemies', 'game-sharing.json', 'index.html', 'package.json', 'pnpm-lock.yaml', 'public', 'scratch', 'scripts', 'shots', 'src', 'template.json', 'tests', 'tsconfig.json', 'vite.config.ts']
+===== README.md (5728 bytes) =====
+# game-3d starter (three.js + Rapier)
+A complete, small 3D game — **Sky Cores**: run, jump and dash across floating islands to collect
+every energy core before the clock runs out, avoiding patrol drones. It exists to be *changed*:
+the engine layer is fixed scaffolding, the game layer is the part you rewrite.
+```bash
+pnpm install
+pnpm dev      # http://localhost:5173
+pnpm build    # typecheck + production build + bundle budget
+pnpm test     # unit tests (rules, save, i18n, level)
+pnpm smoke    # after build: headless browser playthrough + screenshots in shots/
+```
+## Layout
+| Path | Role | Change it? |
+| --- | --- | --- |
+| `src/engine/loop.ts` | Fixed 60 Hz simulation + interpolated rendering | Rarely |
+| `src/engine/input.ts` | Keyboard/mouse, gamepad, touch → one action state | Add actions here |
+| `src/engine/physics.ts` | Rapier world, collider helpers, render interpolation | Rarely |
+| `src/engine/renderer.ts` | WebGL renderer, quality presets, bloom | Rarely |
+| `src/engine/audio.ts` | Music/SFX buses, synthesized SFX, `load()` for files | Add sounds |
+| `src/engine/save.ts` | Versioned localStorage save + leaderboard | Add fields + parsing |
+| `src/engine/i18n.ts` | en / zh-CN, browser detection, saved choice wins | Rarely |
+| `src/engine/assets.ts` | Cached GLTF/texture loading with progress | Use it for models |
+| `src/game/config.ts` | Source defaults and active gameplay configuration | Yes |
+| `src/game/tuning.ts` | Tweak catalog, atomic validation and activation boundaries | Yes |
+| `src/game/rules.ts` | Pure score/lives/clock/win rules (unit tested) | Yes |
+| `src/game/world.ts` | Level layout, sky, lights, islands, stones, lifts | Yes |
+| `src/game/player.ts` | Character controller + game feel + procedural model | Yes |
+| `src/game/*.ts` | Camera, cores, drones, particles, scene orchestration | Yes |
+| `src/ui/`, `src/styles/main.css` | HTML/CSS title, HUD, pause, settings, results | Yes |
+| `src/i18n/*.json` | All player-facing text (both files, same keys) | Yes |
+## Rules for changes
+- **Simulation in `step()`, visuals in `render()`/`animate()`.** Gameplay state only changes in
+  fixed steps; read presses there with `input.consume(action)`, never `pressed()`.
+- **Rules stay pure.** Scoring, win/lose and progression go in `rules.ts` with tests; scene code
+  reports events and reads state.
+- **Every visible string is an i18n key** in both `en.json` and `zh-CN.json` (a test enforces
+  matching keys and placeholders). Chinese glyphs come from the subset font in `public/fonts/`;
+  if you add new Chinese text, check it renders (missing glyphs fall back to system fonts).
+- **UI is HTML/CSS**, not canvas. Keep the game look: display font, outlined text, hard offset
+  shadows, skewed buttons, notched panels. Menus must stay keyboard/gamepad navigable
+  (`data-nav` on focusable controls).
+- **Colliders come from the helpers** in `physics.ts` with the same sizes as the meshes.
+- Keep `npm run build` within budget (`scripts/check-size.mjs`) and `npm run smoke` green.
+## Controls
+Keyboard/mouse: WASD move, mouse look (click to capture), Space jump (hold = higher), Shift
+sprint, F or left click dash, Esc pause. Gamepad: left stick, right stick, A jump, X/RB dash,
+LB sprint, Start pause. Touch: left-side stick, right-side drag to look, JUMP / DASH buttons.
+## Credits
+Fonts: Sora, Figtree, Noto Sans SC — SIL Open Font License 1.1 (see `public/fonts/*-OFL.txt`).
+Libraries: three.js (MIT), Rapier (Apache-2.0).
+## Preview Tweak
+`src/game/tuning.ts` is this game's parameter manager. The Addon panel reads its
+catalog; `config.ts` owns source defaults and the active configuration used by gameplay.
+When adapting the game, keep only controls with actual gameplay consumers, and preserve
+stable IDs for unchanged parameters. Define ranges, units and the correct activation
+boundary. Register through `scripts/manus-tuning/adapter.js` only under `import.meta.env.DEV`.
+Keep the Vite plugin and `scripts/__manus__/` helpers intact; production builds exclude
+the browser adapter and never inject the bridge.
+Apply changes preview state only. `LIVE` parameters are read in the next game update;
+`NEXT_ACTION` parameters activate at the relevant jump/dash start; `NEXT_RUN` parameters
+activate in `Game.start`. Model/collider size and gravity are not exposed by this version.
+Do not mutate the source defaults or persist Apply to localStorage. Save with Manus
+checks the snapshot against the current catalog and edits `DEFAULT_CONFIG`, then uses
+the normal Three.js Web build/checkpoint workflow. Keep existing gameplay parameter
+managers when extending an older project; do not create a competing store.
+For server-authoritative multiplayer, expose local cosmetic controls only until gameplay
+parameters have explicit server-side development support. The descriptor's GAMEPLAY flag
+is a classification, not server authorization or ranked-score enforcement.
+The preview plugin reads the ignored `.manus-webdev/preview-identity.json` v1 projection
+written by the Runtime when initializing, attaching or restoring this project. It contains
+only the resource ID and canonical project directory; private Host bindings and starter
+receipts are not template dependencies. Missing identity disables the bridge.
+The manager latches `tuning.unranked` when non-default GAMEPLAY values become active and
+resets it only at the next run using that run's active values. `Game` snapshots this onto
+`RunState.unranked`; local results cannot save such runs. Preserve this guard when changing
+scoring. When adding online leaderboards, skip submissions for unranked runs and enforce
+eligibility in the authoritative server too; client flags are not proof of a fair score.
+===== NOTES.md (34833 bytes) =====
+# Caveman vs Wild — working notes
+## Project facts
+- Project dir: /home/ubuntu/cavwild (Three.js + TS + Vite, pnpm). Resource: manus-resource://manus-webdev/project/wdp_e1fcc1ae852d8ed933b9a7e2
+- Blueprint gbp_357adb1e2da7761153d31cc1 approved rev 2; nextAction implement; no online features; static game, server/db off.
+- Dev server: `cd /home/ubuntu/cavwild && PORT=3000 HOST=0.0.0.0 pnpm dev` with exec service=true. Public preview URL: https://3000-iipswnenk2gbqim95ge2i-6d3601b3.asia1.manuspre.computer
+- Before first checkpoint read: runtime/skill/references/game-sharing.md (OG cover + favicon required, Three.js section), git-checkpoints.md, deployment.md. Base: /home/ubuntu/.manus-addons/manus-webdev-sha-2f52c9352685f5f3/runtime/skill/references/
+- Checkpoint requires `recorded`/`already_recorded` for pushed SHA; check `publishing.auto_publish` via webdev.config GET config first. Publishing is separate user-authorized.
+- Build config: `{"build":{"command":"pnpm install --frozen-lockfile && pnpm build","outputDirectory":"dist"}}` (verify with GET config).
+- Tweak: keep src/game/tuning.ts manager + config.ts DEFAULT_CONFIG/CONFIG + scripts/manus-tuning + scripts/__manus__; register only in import.meta.env.DEV via registerGameTuning(tuning). Keep unranked latch.
+- User prefs: English; proactive follow-ups; image gen GPT Image 2; music Lyria 3 Pro; SFX ElevenLabs. Webdev says don't proactively generate gameplay assets → synth audio; mention Lyria soundtrack as follow-up.
+- Preview is cross-site iframe: no X-Frame-Options; relative URLs.
+- Screenshots/browser validation off by default unless needed for observed defect; smoke script (playwright) exists and is the project's own check (scripts/smoke.mjs) — update it.
+## Architecture (decided)
+- No Rapier: custom heightfield terrain (src/game/terrain.ts, tested) + circle obstacles.
+- MPA: index.html (game) + enemies/index.html (enemy lab at /enemies).
+- Removed i18n/zh + touch; English UI strings directly.
+- Files: noise.ts, terrain.ts, data.ts (done); rules.ts, materials.ts, props.ts, scenery.ts, nodes.ts, camp.ts, ambient.ts, telegraphs.ts, fx.ts, creatureModels.ts, creatures.ts, caveman.ts/player.ts, camera.ts, game.ts, ui/ui.ts, ui/icons.ts, styles/main.css, lab/lab.ts.
+- Controls: WASD, mouse look (pointer lock), LMB light (3-combo), RMB hold heavy (3 charge levels), Space dodge (i-frames), Shift sprint, E interact, Q lock-on, R poultice, Tab satchel, M map, H controls panel, Esc pause. J/K keyboard fallbacks for attacks.
+- Regions: Fernsong Coast (south), Amberback Highlands (plateau), Cinder Caldera (north volcano). Camp at (24,48). Ruins arena (128,-46) r30 → Ruinhorn. Crater arena (-20,-182) r22 → Vulkarr. Heat zone dv<112 needs Ashguard Mantle.
+- Camp stages 0 ruined → 1 Hearth → 2 Palisade → 3 Stonehold; tower restore = victory.
+## Progress log (updated 18:30)
+- DONE: noise, terrain(+test), data, rules(+test 8 passing), materials (wind/terrain/water/lava/sky/waterfall), props, colliders, scenery(+placement test), input (actions: light heavy dodge sprint interact lock heal satchel map help pause confirm; mouse L/R/M; input.gameplayMouse, input.press()), audio (Sfx list: swing heavySwing hit bigHit hurt dodge gather craft upgrade roar stomp carve ui win lose heal charge fire error tell step; intensity 0/1/2; setAmbience(w, nearSea)), config (player/comb
+at/camera/expedition), tuning (boundaries 'dodge'|'run'), telegraphs (Ground interface; Telegraphs.spawn(shape,x,z,yaw) → t.progress, t.place(), t.release()), fx (sparks, hitBurst, dustPuff, embers, flame, healGlow, fountain, ring, lob, shake, hitstop), creatureModels (buildRig, applyPose(rig,Pose), restPose, setFlash; +Z forward, identity quaternion).
+- Yaw convention: forward = (sin yaw, cos yaw); object.rotation.y = yaw.
+- src/main.ts is a TEMPORARY scenery viewer (?v=camp|beach|jungle|falls|high|ruins|cald|crater|over); scripts/shots.mjs captures (run in background: SwiftShader ~1 min/shot; long blocking execs get interrupted).
+- Removed tests: tuning.test.ts, save.test.ts (need new tuning test). tests/preview.test.mjs exists (check).
+- TODO next: creatures.ts (AI states idle/alert/chase/windup/active/recover/stagger/flinch/return/dead/gone; shapes circle/cone/lane/leap/burst/spit; poise→stagger; boss enrage<50%; carve via E; boss carcass persists while key item missing), player.ts (caveman procedural model, light 3-combo, heavy charge 3 levels, dodge i-frames, flinch/down, heal, gather/carve, heat dmg), camera.ts (orbit+lock-on+terrain clearance+shake), nodes.ts (instanced per kind, glints, respawn), camp.ts (stages 0-3 visi
+ble + tower + fire), game.ts, ui/ui.ts + css (HUD, satchel tabs Materials/Craft/Camp/Gear, map canvas, controls card H, pause, title Continue/New/Lab, faint overlay, victory stats), lab (enemies/index.html + src/lab/main.ts), smoke script update, OG cover+favicon (GPT Image 2 via imagegen per game-sharing.md), checkpoint.
+- Scenery visual review done: jungle/ruins/highlands good; crater lava toned down (verify later).
+## Progress 18:45
+- DONE also: creatures.ts (Creature class; CreatureCtx{ground,colliders,telegraphs,fx,audio,player,safe,emit}; events engage/enrage/stagger/killed/dodged; takeHit(attack,motion,heavy,from,ctx); forceAttack(id,ctx) for lab; puppet flag; carvable/carved(); respawn(ground); states incl 'gone' with respawnT), player.ts (Player: update(dt, PlayerCtx{input,camYaw,ground,colliders,creatures,aim,locked,fx,audio,cctx,onHit,poultices,consumePoultice,onDodge,onError}); setGear(stats,weapon,armor,tier); sta
+rtTask('gather'|'carve',dur,done); hurt(dmg); revive(); restore(); place(x,z,ground,yaw)), camera.ts (OrbitCamera.update(dt,target,look,lockOnPos|null,ground,shake,bigTarget)), nodes.ts (Nodes(terrain,colliders): group, nearest(x,z,r), nearestOfKind, deplete, update(dt,time,pixelScale)), camp.ts (CAMP consts hearth/tower/spawn/safeR=19; Camp(terrain,colliders,fx): root, setStage(stage,towerLit,animate), celebrateTower(), towerTop, update(dt,time)).
+- Starter main.ts (git HEAD) pattern: DEV-only `const [{ registerGameTuning }, { tuning }] = await Promise.all([import('../scripts/manus-tuning/adapter.js'), import('./game/tuning')]); await registerGameTuning(tuning)`. GameLoop({step, render(alpha, frameSeconds)}), loop.paused, loop.resetAccumulator(). Renderer(canvas, quality) + suggestQuality(); SaveStore (settings; SAVE_KEY 'game3d.save' → rename cavwild.settings). Keep input.update() at render start; input.endFrame() after.
+- NEXT: game.ts orchestrator, ui.ts + css, main.ts, lab (enemies.html), vite multi-page input.
+- 18:58 wrote game.ts, ui/icons.ts, ui/ui.ts; main.css being rewritten (starter css removed); next main.ts + enemies lab
+- 19:27 main.ts real boot, lab (/enemies) + lab.css, main.css rewritten; playtest script scripts/play.mjs (swiftshader ~5fps, screenshot 22s → use 960x540, timeout 120s)
+- 19:35 OG cover (gpt-image-2.5) -> assets/share/og.png 1200x630 (raw shots/og-raw.png), favicon assets/share/favicon.png + public/favicon.png; game-sharing.json written. TODO: webdev.config POST game/sharing/prepare {} before build; commit package.json + scripts/manus-game-sharing.
+- Webdev refs now at /home/ubuntu/.manus-addons/manus-webdev-sha-152f59e694d422b9/runtime/skill/references/ (game-sharing.md, git-checkpoints.md, deployment.md)
+- Playtest ids: node kinds wood/stone/fiber/bone/herb/amber/obsidian/sulfur; items hogTusk roughHide snapperScale stalkerClaw ruinPlate ruinCrest magmaHeart...
+## UPGRADE REQUEST (19:35) — "Primal Hunt" overhaul
+User asks: research genre refs -> concept proposal doc + concept images -> implement fully. Generous VFX/particles (gameplay + HUD).
+Catalog first, else GPT image (gpt-image-2.5) for assets/HUD. New BGM (generate_music) + SFX (generate_sound_effect). New loading bg, favicon, OG.
+Staged loading: title + first segment first, then stream next; pause prefetch when combat/VFX heat up.
+Models much more realistic (player, env, enemies, dust, projectiles, vfx). Reduce glare: lower reflection/emission on env surfaces.
+Plan: GPT concept refs (plain bg) -> Tripo3D image_to_model (data-api skill: /home/ubuntu/skills/data-api; apis Tripo3D/upload_image, image_to_model, get_task) -> gltf-transform decimate+webp -> in-engine auto-skin to procedural skeleton (keep pose system).
+Catalog: Quaternius packs are low-poly (not realistic); 3dassets packs are static small studies. Use catalog for SFX/textures only if fitting.
+Research sources: kokutech MHW flow loop; gamesradar Wilds hitstop; monsterhunter.com focus mode/wounds.
+### Research refs (external)
+- https://www.kokutech.com/blog/gamedev/design-patterns/flow-state/monster-hunter-world : MHW loop = prep -> track -> fight -> carve/craft; stress/relief/mastery/progress; part breaks change fights; peak moments = perfectly timed charged hit into attack animation or stun window with visceral AV feedback; menus/inventory/sharpening break flow; peaks+valleys pacing; every system feeds core loop.
+- https://www.gamesradar.com/games/monster-hunter/monster-hunter-wilds-hitstop-feels-way-better-... : Wilds director Tokuda restored hitstop after beta; heavy weapons (hammer/greatsword) benefit most; finishing moves get extra hitstop.
+- https://www.monsterhunter.com/wilds/en-us/hunting/focus-mode/ : Focus mode aims toward camera, highlights wounds/weak points; Focus Strike on wound = destroys wound, massive damage + stun.
+- Classic juice talks (knowledge): "Juice it or lose it" (Jonasson & Purho, GDC Europe 2012); "The Art of Screenshake" (Jan Willem Nijman, 2013).
+### Concept images (docs/concept/)
+01-world-cinderfall-isle.png, 02-combat-hud-mockup.png, 03-bestiary-lineup.png, 04-hunter-gear-tiers.png, 05-vfx-hud-kit.png (gpt-image-2.5)
+Art direction: stylised realism, realistic PBR textures, warm saturated sunny grade; HUD = carved stone/bone frames, amber, charcoal, bone white.
+### 3D pipeline (19:55)
+- Tripo3D via data-api FAILED: upstream "not enough credit" (service-side). Do not retry.
+- USE Higgsfield MCP (user connector, Ultra plan, ~2839 credits): generate_3d model `image_to_3d` (Meshy): params should_texture, enable_pbr, target_polycount (100-300k, default 30k), topology, symmetry_mode, pose_mode a-pose/t-pose, enable_rigging (humanoid only), enable_animation + animation_action_id (0 idle, 30 walk, 16 run; search `animation_actions`), rigging_height_meters. `3d_rigging` model takes model_url (prior job GLB) + animation_action_id -> rigged/animated GLB. medias:[{value: medi
+a_id, role:'image'}]. get_cost:true preflight. Poll with job_status / jobs_wait.
+- Upload: media_upload(files[]) -> curl PUT -> media_confirm(type image, media_ids). media ids saved in art/refs/hf_media.json.
+- Creatures are quadrupeds -> no Meshy rig; auto-skin in engine to procedural skeleton.
+- 20:00 Submitted 15 Higgsfield generate_3d jobs; ids in art/refs/hf_jobs.json. Poll with higgsfield jobs_wait (<=12 ids). Download GLBs to art/models/raw/.
+- Hunter clip plan (3d_rigging on hunter-t0 GLB, 8cr each; retarget by bone name to t1-t3): 85 Axe_Stance(combat idle), 30 Casual_Walk, 16 RunFast, 158 Roll_Dodge, 97 Left_Slash(light), 128 Heavy_Hammer_Swing(heavy), 178 Hit_Reaction, 187 Knock_Down(faint), + pickup/gather clip (search 'pick up').
+### 20:10 status
+- Optimised GLBs in public/models/*.glb via `node scripts/optimize-models.mjs <names>` (raw in art/models/raw, gitignored). ~1-1.4MB creatures, ~0.25MB weapons. Emissive stripped except emberbeetle/vulkarr (0.55). metallic 0, rough>=0.85.
+- ALL creature GLBs face +Z, centred at origin, max extent ~1.9 (normalised), y range ~[-0.6..0.6]; weapons vertical along +Y head up, grip at -Y.
+- Turntable check: `node scratch/shoot.mjs "http://127.0.0.1:3000/scratch/view.html?m=a,b" scratch/x.png` (scratch/ gitignored).
+- Hunters (rigged Meshy, idle clip id 0) still generating: hunter-t0..t3 job ids in art/refs/hf_jobs.json.
+- Music: manus generate_music FAILS (lyria key missing, service-side). Do not use higgsfield sonilo_music (restricted to HF pipeline). Plan: adaptive layered score = ElevenLabs loops (art/audio/layers/{explore_perc,hunt_drums,boss_drums}.mp3 + amb/{jungle,highlands,caldera,camp,ocean}.mp3) + existing procedural melodic synth on top.
+- SFX done (art/audio/sfx/): hit_light hit_heavy swing_light swing_heavy dodge player_hurt roar_beast roar_boss slam fire_launch fire_impact gather_wood gather_rock gather_plant pickup ui_click ui_open craft camp_upgrade signal_ignite carve creature_down part_break heal faint telegraph steps_grass steps_stone heartbeat(loop) perfect_dodge lockon stagger.
+- Catalog: no music. Has Poly Haven HDRIs + PBR textures (use for terrain/rock textures).
+### Auto-skin design (creatureModels.ts)
+- Keep procedural builders as bone layout + placeholder while GLB streams. On GLB ready: hide proc meshes; scale GLB uniformly to proc bbox (sqrt(len ratio*height ratio)), feet y=0, xz centred; refit leg hips xz to GLB foot-vertex clusters (y<0.12H); skin weights = inverse distance^4 to bone segments (body line tail-root->neck, neck chain, head fwd, jaw rule (below head centre & forward of jaw pivot), tail chain, hip->knee, knee->ground, wings along ±x), top-4 normalised. Cache weights per speci
+es; per instance new SkinnedMesh(sharedGeo, clonedMat) bound to its rig Object3Ds (Skeleton works with Object3D matrixWorld). Glow species: GLB mat in rig.glow.
+- Player: Meshy humanoid rig; extra clips via higgsfield 3d_rigging(model_url=hunter-t0 glb, animation_action_id) 8cr each; strip meshes from clip GLBs -> anim-only files; retarget by bone name; weapon to RightHand bone.
+- 20:13 hunter-t0..t2 downloaded (raw). Meshy skeleton 24 joints: Hips LeftUpLeg LeftLeg LeftFoot LeftToeBase RightUpLeg RightLeg RightFoot RightToeBase Spine02 Spine01 Spine LeftShoulder LeftArm LeftForeArm LeftHand RightShoulder RightArm RightForeArm RightHand neck Head head_end headfront; idle clip 'Armature|Idle|baselayer'. Clip jobs (3d_rigging on t0 url) ids in hf_jobs.json clip-*: walk30 run16 stance89 light4 heavy128 dodge158 hit178 down187 gather276. Retarget: keep only quaternion track
+s + Hips position.
+### 20:23 UI/VFX art generated (raw, art/ui + art/vfx)
+- art/ui (transparent PNG, gpt-image-2.5): med-heart, med-stamina, ring-slot, crest-boss(16:9), compass-ring, logo(16:9 "CAVEMAN VS WILD"), bar-frame(21:9, empty channel), button(21:9), banner(21:9 hide parchment), reticle; icons-a.png / icons-b.png = 4x3 grids.
+  icons-a order: wood stone fiber flint / bone herb amber obsidian / sulfur hogTusk roughHide snapperScale
+  icons-b order: stalkerClaw stalkerHide emberCarapace ashfangPelt / ruinPlate hornShard ruinCrest scorchScale / magmaHeart poultice armour(gear) club(gear)
+- art/ui/loading-bg.jpg (16:9 opaque key art, hunter on cliff over island) -> use for loading screen + OG card base (+logo overlay).
+- art/vfx: spark, smoke, flame, slash (black bg -> additive / luminance alpha), crack.png (transparent decal).
+- Next: process -> public/ui/*.webp, public/vfx/*.webp; icons sliced to public/ui/icons/<itemId>.webp.
+- 20:29 public/ui/*.webp (+icons/<itemId>.webp, gear-armour, gear-weapon), public/vfx/{spark,flame,slash,smoke,crack}.webp, public/ui/loading-bg.webp DONE (scripts/clean_icons.py).
+- public/models/hunter-t0..t3.glb (skinned, 24 joints, armature scale 0.01 -> normalise at runtime by Box3) + public/models/hunter-anims.glb (mesh-free; clips: idle walk run stance light heavy dodge hit down gather; durations 4.03 4.23 0.50 1.70 2.83 1.87 1.87 1.67 2.53 7.23). scripts/merge-anims.mjs.
+- NEXT: src/engine/assets.ts staged loader (boot=title+coast, then highlands, caldera; prefetch paused when busy) -> creatureModels auto-skin -> player GLB+mixer -> audio samples -> fx textures -> HUD restyle -> scenery glare -> loading screen -> OG/favicon -> proposal doc.
+- 20:34 Lyria music all failed again. BGM = ElevenLabs loops public/audio/music/{title,coast,highlands,caldera}.mp3 (30s loops) + victory.mp3 sting + drum layers. audio.ts rewritten (sample-first, synth fallback, setAmbience(w, nearSea, atCamp), setLowHealth, playVictory, onTitle). assets.ts written (MANIFEST boot/highlands/caldera).
+- 20:38 creatureSkin.ts written (attachModel), hooked in Creature ctor via assets.onGltf. tsc clean. NEXT: verify in lab, then player GLB.
+- 20:45 hunterModel.ts (HunterAvatar) integrated in Player (avatar.update(dt, animDrive)); verified pose sheet via scratch/hunter.html + scripts/hshot.mjs (poses JSON in URL). Down clip: airborne 0.2-0.6, lying from 0.72.
+- 20:49 DONE: creatures.ts sounds remapped (bossRoar/roar/stagger/down/fireHit). fx.ts REWRITTEN (textured sprite pools glow/fire/smokeP/dust; impactFlash, slash(p,camera,tilt), crack, smoke, fireBurst, swingTrail(base,tip,on,color), activeCount; API compatible). main.ts: staged boot (game.load + assets.loadStage('boot')), prefetch highlands/caldera after title, assets.busy = () => g.isBusy() [isBusy NOT YET WRITTEN in game.ts], audio.onTitle, firstGesture startMusic.
+- TODO game.ts: isBusy(); setAmbience(w,nearSea,atCamp); setLowHealth; gather sfx per kind (wood->gatherWood, stone/flint/amber/obsidian/sulfur->gatherRock, herb/fiber->gatherPlant, bone->carve); lockon sfx; pickup sfx in give(); playVictory on win; perfect dodge sfx at 'dodged'; partBreak; onPlayerHit add slash/crack; swingTrail each frame from player.avatar (hand pos + weaponTip) on during attack/heavy states; assets.prioritise on region change.
+- Then: HUD restyle (public/ui/*.webp), loading screen bg, scenery glare, OG/favicon, proposal doc (docs/), tests, build, checkpoint.
+- 21:00 DONE game.ts hooks (isBusy, footsteps, swingTrail, slash/crack on hit, perfect dodge fx, lockon/pickup/gather sfx, playVictory, assets.prioritise on region, atCamp ambience, frameAvg). ui/uifx.ts (HUD canvas particles: burst/ring/outline/fly) + ui.ts wired (painted icons via itemIcon, logo img, medallions, compass, crest, reticle img, hurt shards, craft/upgrade/objective/victory bursts, loot fly). styles/skin.css (painted skin) impor
+===== CREDITS.md (863 bytes) =====
+# Credits and asset provenance
+| Asset | Source | License |
+|---|---|---|
+| Environment vegetation and rocks (`public/models/env/*.glb`) | [Stylized Nature MegaKit](https://quaternius.itch.io/stylized-nature-megakit) by Quaternius, via the Manus game asset catalog; re-encoded with `scripts/optimize-env.mjs` | CC0 1.0 |
+| Hunter, creature, boss and weapon models (`public/models/*.glb`) | Generated for this project (image-to-3D from original concept art), optimised with `scripts/optimize-models.mjs` | Project-owned |
+| Concept art, HUD art, icons, VFX sprites, loading art, OG card, favicon | Generated for this project (GPT Image) | Project-owned |
+| Music loops, ambience and sound effects (`public/audio`) | Generated for this project (ElevenLabs sound generation) | Project-owned |
+| Fonts (`public/fonts`) | See `public/fonts/*-OFL.txt` | SIL OFL 1.1 |
+===== package.json (917 bytes) =====
+{
+  "name": "cavwild",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "node scripts/manus-game-sharing/build.mjs",
+    "preview": "vite preview --port 4173 --strictPort",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "smoke": "node scripts/smoke.mjs",
+    "manus:build-source": "tsc --noEmit && vite build && node scripts/check-size.mjs"
+  },
+  "dependencies": {
+    "three": "^0.186.1"
+  },
+  "devDependencies": {
+    "@gltf-transform/cli": "^4.5.0",
+    "@gltf-transform/core": "^4.5.0",
+    "@gltf-transform/extensions": "^4.5.0",
+    "@gltf-transform/functions": "^4.5.0",
+    "@types/node": "^22.20.4",
+    "@types/three": "^0.186.0",
+    "meshoptimizer": "^1.3.0",
+    "playwright": "^1.63.0",
+    "sharp": "^0.35.5",
+    "typescript": "^5.9.3",
+    "vite": "^8.3.1",
+    "vitest": "^5.0.2"
+  },
+  "packageManager": "pnpm@10.18.0"
+}
+===== vite.config.ts (1018 bytes) =====
+import { manusGameTuning } from './scripts/manus-tuning/vite.mjs'
+import { loadEnv } from 'vite'
+import { defineConfig } from 'vitest/config'
+// Relative base keeps production output portable; the Session owns preview HOST/PORT.
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, '.', ['HOST', 'PORT'])
+  const port = Number(env.PORT ?? 3000)
+  if (!Number.isInteger(port) || port < 1 || port > 65535) throw new Error('Invalid PORT')
+  return {
+    base: './',
+    plugins: [manusGameTuning()],
+    server: {
+      host: env.HOST ?? '127.0.0.1', port, strictPort: true,
+      allowedHosts: ['.manuspre.computer', '.manus.computer', '.manus-asia.computer', '.manuscomputer.ai', '.manusvm.computer', 'localhost', '127.0.0.1'],
+    },
+    build: { target: 'es2022', assetsInlineLimit: 0, chunkSizeWarningLimit: 4600, sourcemap: false, rollupOptions: { input: { main: 'index.html', enemies: 'enemies/index.html' } } },
+    test: { environment: 'node', include: ['tests/**/*.test.{ts,mjs}'] },
+  }
+})
+===== src/main.ts (8058 bytes) =====
+import './styles/main.css'
+import './styles/skin.css'
+import { Audio } from './engine/audio'
+import { Input } from './engine/input'
+import { SAVE_KEY, SaveStore, type SaveData } from './engine/save'
+import type { Game } from './game/game'
+import { Ui } from './ui/ui'
+async function boot(): Promise<void> {
+  // Hosts that serve the game shell for /enemies: hop to the lab page.
+  if (/\/enemies$/.test(location.pathname)) {
+    location.replace(`${location.pathname}/${location.search}`)
+    return
+  }
+  const canvas = document.querySelector<HTMLCanvasElement>('#game')!
+  const firstRun = safeGet(SAVE_KEY) === null
+  const save = new SaveStore()
+  const input = new Input(canvas)
+  const audio = new Audio()
+  let game: Game | undefined
+  let lockLostAt = 0
+  const applySettings = (d: SaveData) => {
+    input.sensitivity = d.sensitivity
+    input.invertY = d.invertY
+    audio.setVolumes(d.musicVolume, d.sfxVolume, d.muted)
+    if (game) {
+      game.reducedMotion = d.reducedMotion
+      game.setQuality(d.quality)
+    }
+  }
+  /** Set once the player picks a quality themselves: the adaptive governor then never overrides it. */
+  let manualQuality = false
+  const startRun = (fresh: boolean) => {
+    if (!game) return
+    audio.unlock()
+    audio.onTitle = false
+    audio.startMusic()
+    game.start(fresh)
+    ui.show('hud')
+    input.lockPointer()
+  }
+  const pause = () => {
+    if (game?.mode !== 'playing') return
+    game.pause()
+    ui.show('pause')
+    input.unlockPointer()
+  }
+  const resume = () => {
+    if (game?.mode !== 'paused') return
+    game.resume()
+    ui.show('hud')
+    input.lockPointer()
+  }
+  const ui = new Ui(save, {
+    newGame: () => startRun(true),
+    continueGame: () => startRun(false),
+    resume,
+    quitToTitle: () => {
+      game?.toTitle()
+      audio.onTitle = true
+      ui.show('title')
+      input.unlockPointer()
+    },
+    keepExploring: () => {
+      game?.keepExploring()
+      ui.show('hud')
+      input.lockPointer()
+    },
+    settings: patch => {
+      if (patch.quality) manualQuality = true
+      save.update(patch)
+      applySettings(save.data)
+    },
+    lockPointer: () => input.lockPointer(),
+    consumeKeys: () => {
+      for (const a of ['satchel', 'pause', 'map', 'help'] as const) input.consume(a)
+    },
+  })
+  ui.show('boot')
+  applySettings(save.data)
+  ui.setBootProgress(0.05, 'Waking the island…')
+  const [{ Game }, { Renderer, suggestQuality }] = await Promise.all([import('./game/game'), import('./engine/renderer'), document.fonts.ready])
+  if (firstRun) {
+    save.update({ quality: suggestQuality() })
+    ui.refreshSettings()
+  }
+  const renderer = new Renderer(canvas, save.data.quality)
+  game = new Game(renderer, input, audio, ui.hooks(), save.data.quality)
+  game.reducedMotion = save.data.reducedMotion
+  ui.game = game
+  const labels = ['Raising the volcano…', 'Growing the jungle…', 'Scattering the savanna…', 'Cooling the obsidian…', 'Waking the creatures…']
+  // Stage 1 (blocking): world build + only the title/first-region assets. Later regions stream in the background.
+  const { assets } = await import('./engine/assets')
+  let fWorld = 0
+  let fAssets = 0
+  const report = () => {
+    const f = fWorld * 0.55 + fAssets * 0.45
+    ui.setBootProgress(0.08 + f * 0.92, labels[Math.min(labels.length - 1, Math.floor(f * labels.length))])
+  }
+  await Promise.all([
+    game.load(f => { fWorld = f; report() }),
+    assets.loadStage('boot', f => { fAssets = f; report() }),
+  ])
+  if (import.meta.env.DEV) {
+    try {
+      const [{ registerGameTuning }, { tuning }] = await Promise.all([import('../scripts/manus-tuning/adapter.js'), import('./game/tuning')])
+      await registerGameTuning(tuning)
+    } catch (e) {
+      console.warn('tuning bridge unavailable', e)
+    }
+  }
+  const g = game
+  let last = performance.now()
+  let uiErrorLogged = false
+  let stepErrorLogged = false
+  // Adaptive quality: sustained low frame rate during play steps quality down one level at a time.
+  let frameEma = 1 / 60
+  let slowFor = 0
+  let governorCooldown = 6
+  const frame = (now: number) => {
+    // Schedule first: an exception anywhere below must never freeze the game loop.
+    requestAnimationFrame(frame)
+    const frameSeconds = Math.min(0.1, Math.max(0, (now - last) / 1000))
+    last = now
+    input.update()
+    if (input.consume('pause') && performance.now() - lockLostAt > 300) {
+      if (g.mode === 'playing' && ui.screen === 'hud') pause()
+      else if (g.mode === 'paused' && ui.screen === 'pause') resume()
+    }
+    if (g.mode !== 'playing') {
+      input.consume('light')
+      input.consume('heavy')
+    }
+    // Fixed-size substeps keep combat timing stable on any refresh rate.
+    let left = frameSeconds
+    while (left > 1e-4) {
+      const dt = Math.min(1 / 60, left)
+      try {
+        g.step(dt)
+      } catch (err) {
+        // Never let one bad simulation step freeze the hunt; report the first failure.
+        if (!stepErrorLogged) { stepErrorLogged = true; console.error('[game] step error', err) }
+      }
+      left -= dt
+      input.endFrame()
+    }
+    if (g.mode === 'playing' && ui.screen === 'faint') ui.show('hud')
+    try {
+      ui.frame(frameSeconds)
+    } catch (err) {
+      // A HUD failure must not skip world rendering; log the first one for debugging.
+      if (!uiErrorLogged) { uiErrorLogged = true; console.error('[ui] frame error', err) }
+    }
+    g.render(frameSeconds)
+    input.endFrame()
+    if (g.mode === 'playing' && ui.screen === 'hud' && !manualQuality) {
+      frameEma += (frameSeconds - frameEma) * 0.08
+      governorCooldown = Math.max(0, governorCooldown - frameSeconds)
+      slowFor = frameEma > 1 / 24 ? slowFor + frameSeconds : Math.max(0, slowFor - frameSeconds * 2)
+      const q = save.data.quality
+      if (slowFor > 5 && governorCooldown === 0 && q !== 'low') {
+        const next = q === 'high' ? 'medium' : 'low'
+        save.update({ quality: next })
+        g.setQuality(next)
+        ui.refreshSettings()
+        ui.toast(`Graphics set to ${next} for smoother play (change in Settings)`, 'info')
+        slowFor = 0
+        governorCooldown = 10
+        frameEma = 1 / 60
+      }
+    }
+  }
+  requestAnimationFrame(frame)
+  document.addEventListener('pointerlockchange', () => {
+    input.gameplayMouse = !!document.pointerLockElement
+    // Browsers release pointer lock on Escape without delivering the key: treat that as pause.
+    if (!document.pointerLockElement && g.mode === 'playing' && ui.screen === 'hud' && input.method === 'keyboard') {
+      lockLostAt = performance.now()
+      pause()
+    }
+  })
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) pause()
+  })
+  canvas.addEventListener('click', () => {
+    if (g.mode === 'playing' && ui.screen === 'hud') input.lockPointer()
+  })
+  window.addEventListener('beforeunload', () => {
+    if (g.mode !== 'title' && g.mode !== 'loading') g.save()
+  })
+  window.setTimeout(() => ui.show('title'), 150)
+  // Stage 2+ (background): highlands then caldera; paused while combat/VFX heat up.
+  assets.busy = () => g.isBusy()
+  assets.slow = () => g.isSlow()
+  window.setTimeout(() => assets.prefetch(['coast', 'highlands', 'caldera']), 600)
+  // Title theme starts on the first gesture (browsers block autoplay).
+  const firstGesture = () => { audio.unlock(); audio.onTitle = g.mode === 'title'; audio.startMusic() }
+  window.addEventListener('pointerdown', firstGesture, { once: true })
+  window.addEventListener('keydown', firstGesture, { once: true })
+  // Debug/test hook (read-only use): smoke tests inspect state through it.
+  ;(window as unknown as { __game: unknown }).__game = { game: g, ui, input, save }
+}
+function safeGet(key: string): string | null {
+  try {
+    return localStorage.getItem(key)
+  } catch {
+    return null
+  }
+}
+boot().catch(e => {
+  console.error(e)
+  document.body.insertAdjacentHTML('beforeend', `<pre style="color:#ffb0a0;position:fixed;inset:auto 0 0 0;padding:12px;background:#000c;white-space:pre-wrap">${String(e?.stack ?? e)}</pre>`)
+})
+===== src/game/game.ts (55861 bytes) =====
+import * as THREE from 'three'
+import { assets } from '../engine/assets'
+import { CONFIG } from './config'
+import { Colliders } from './colliders'
+import { Scenery, type SceneryQuality } from './scenery'
+import { ARENAS, REGION_NAMES, Terrain, WORLD, type RegionId } from './terrain'
+import { Fx } from './fx'
+import { Telegraphs } from './telegraphs'
+import { Creature, type CreatureCtx, type CreatureEvent } from './creatures'
+import { Player, type PlayerCtx } from './player'
+import { OrbitCamera } from './camera'
+import { Nodes, type GNode } from './nodes'
+import { Camp, CAMP } from './camp'
+import { GADGET_TUNING as GT, GEAR, HELD_NAMES, HELD_ORDER, ITEMS, MEALS, NODES, SLING_RANGE, SPAWNS, SPECIES, TRACKING, type GadgetId, type GearId, type HeldId, type ItemId, type MealId, type RecipeId, type SearQuality, type SpeciesId } from './data'
+import { Gadgets } from './gadgets'
+import { Tracks, type StudyTarget } from './tracks'
+import { Harvest } from './harvest'
+import {
+  PROGRESS_KEY, add, addClue, canHold, carveLoot, clearTrack, cook, craft, equip, gearStats, hold, isTracked, newProgress, nextGadget, nextHeld, noteHunt, notePart,
+  noteSeen, noteWeak, objective, parseProgress, restoreTower, tickMeal, upgradeCamp, useGadget,
+  type ActionResult, type Objective, type Progress,
+} from './rules'
+import type { Renderer } from '../engine/renderer'
+import type { Input } from '../engine/input'
+import type { Audio } from '../engine/audio'
+export type Mode = 'loading' | 'title' | 'playing' | 'menu' | 'paused' | 'fainted' | 'victory'
+export type PopupKind = 'dmg' | 'punish' | 'big' | 'heal' | 'info' | 'loot' | 'warn' | 'taken' | 'weak'
+export type MenuTab = 'materials' | 'craft' | 'camp' | 'gear' | 'cook' | 'journal'
+export type StampKind = 'gold' | 'trap' | 'flash' | 'track' | 'counter'
+export type Hooks = {
+  popup(text: string, at: THREE.Vector3, kind: PopupKind): void
+  toast(text: string, kind?: 'good' | 'warn' | 'info'): void
+  loot(id: ItemId, n: number): void
+  banner(title: string, sub: string, kind?: 'region' | 'boss' | 'camp'): void
+  tip(id: string, html: string): void
+  openMenu(tab?: MenuTab): void
+  /** Big centre-screen callout (PERFECT SEAR, TRAPPED, COUNTER!...). */
+  stamp(text: string, kind: StampKind): void
+  /** A journal page gained knowledge. */
+  journal(sp: SpeciesId, text: string): void
+  /** Full-screen white-out pulse (0..1). */
+  flash(amount: number): void
+  faint(): void
+  victory(): void
+  hurt(amount: number): void
+}
+export type Interact = { label: string; verb: string; enabled: boolean; note?: string }
+const HEARTH_R = 4.4
+const TOWER_R = 5.2
+export class Game {
+  readonly scene = new THREE.Scene()
+  readonly terrain = new Terrain()
+  readonly colliders = new Colliders()
+  private readonly reserved = new Colliders()
+  scenery!: Scenery
+  readonly fx = new Fx()
+  readonly telegraphs: Telegraphs
+  readonly player = new Player()
+  readonly cam: OrbitCamera
+  nodes!: Nodes
+  harvest!: Harvest
+  private resT = 99
+  private pendingHeld: HeldId | null = null
+  /** Carcass being carved; released if the carve is interrupted so it can still sink and respawn. */
+  private carveTarget: Creature | null = null
+  private resId = -1
+  private resKind: 'tree' | 'rock' = 'tree'
+  private resPos: THREE.Vector3 | null = null
+  /** Last chop/mine feedback for the HUD progress bar. */
+  harvestInfo = { label: '', frac: 1, t: 99, slow: false, kind: 'tree' as 'tree' | 'rock' }
+  camp!: Camp
+  gadgets!: Gadgets
+  tracks!: Tracks
+  /** Species whose scent trail is shown (last one tracked). */
+  trackSp: SpeciesId | null = null
+  private gadgetBuffer = 0
+  /** World position of the nearest tracked beast (map pin / compass). */
+  trackPos: THREE.Vector3 | null = null
+  private huntStart = new Map<number, number>()
+  private sightT = 0
+  private prevPState = ''
+  readonly creatures: Creature[] = []
+  progress: Progress = newProgress()
+  mode: Mode = 'loading'
+  lockTarget: Creature | null = null
+  softTarget: Creature | null = null
+  /** Most recent creature you fought (for the HUD target panel). */
+  focusTarget: Creature | null = null
+  boss: Creature | null = null
+  interact: Interact | null = null
+  region: RegionId = 'coast'
+  /** Combat level this frame (0 none, 1 hunt, 2 boss) and smoothed frame time — drive background loading. */
+  private combatLevel = 0
+  private frameAvg = 1 / 60
+  private stepDist = 0
+  private readonly _trailBase = new THREE.Vector3()
+  heat = 0
+  time = 0
+  reducedMotion = false
+  private interactFn: (() => void) | null = null
+  private cctx!: CreatureCtx
+  private pctx!: PlayerCtx
+  private saveT = 0
+  private faintT = 0
+  private cineT = 0
+  private titleT = 0
+  private focusT = 0
+  private lastRegion: RegionId | null = null
+  private readonly v = new THREE.Vector3()
+  private mapCanvas?: HTMLCanvasElement
+  quality: SceneryQuality
+  constructor(private readonly renderer: Renderer, private readonly input: Input, readonly audio: Audio, private readonly hooks: Hooks, quality: SceneryQuality) {
+    this.quality = quality
+    this.cam = new OrbitCamera(innerWidth / innerHeight)
+    this.telegraphs = new Telegraphs(this.terrain)
+    this.scene.add(this.fx.group, this.telegraphs.group, this.player.root)
+  }
+  /** Build the world in phases (the loading bar follows `progress`). */
+  async load(progress: (f: number) => void): Promise<void> {
+    // Keep scatter away from the camp footprint.
+    this.reserved.add(CAMP.x, CAMP.z, 22)
+    this.scenery = new Scenery(this.scene, this.terrain, this.colliders, this.reserved, this.quality)
+    await this.scenery.build(f => progress(f * 0.8))
+    this.nodes = new Nodes(this.terrain, this.colliders)
+    this.scene.add(this.nodes.group)
+    this.harvest = new Harvest(this.scenery, this.terrain, this.colliders, this.fx, this.audio)
+    this.scene.add(this.harvest.group)
+    this.harvest.onLoot = (items, at, kind) => {
+      items.forEach(([id, n], i) => this.give(id, n, at.clone().setY(at.y + i * 0.45)))
+      this.audio.play('pickup', 0.8)
+      this.fx.fountain(at, kind === 'tree' ? '#ffd9a0' : '#e8ecf4', 16, 2.5)
+      this.harvestInfo.t = 99
+      this.progress.harvested += 1
+    }
+    progress(0.85)
+    await new Promise(r => setTimeout(r, 0))
+    this.camp = new Camp(this.terrain, this.colliders, this.fx)
+    this.scene.add(this.camp.root)
+    this.gadgets = new Gadgets(this.scene, this.terrain, this.fx, this.audio)
+    this.tracks = new Tracks(this.scene, this.terrain)
+    this.spawnCreatures()
+    progress(0.95)
+    this.player.root.traverse(o => {
+      if ((o as THREE.Mesh).isMesh) o.castShadow = true
+    })
+    this.cctx = {
+      ground: this.terrain,
+      colliders: this.colliders,
+      telegraphs: this.telegraphs,
+      fx: this.fx,
+      audio: this.audio,
+      player: this.player,
+      safe: { x: CAMP.x, z: CAMP.z, r: CAMP.safeR },
+      emit: e => this.onCreatureEvent(e),
+      creatures: this.creatures,
+      onStep: (c, x, z, yaw) => this.tracks.addPrint(c, x, z, yaw),
+    }
+    this.pctx = {
+      input: this.input,
+      camYaw: 0,
+      ground: this.terrain,
+      colliders: this.colliders,
+      creatures: this.creatures,
+      aim: null,
+      locked: false,
+      fx: this.fx,
+      audio: this.audio,
+      cctx: this.cctx,
+      onHit: (c, r, p, heavy) => this.onPlayerHit(c, r, p, heavy),
+      poultices: () => this.progress.inv.poultice ?? 0,
+      consumePoultice: () => {
+        add(this.progress, 'poultice', -1)
+        this.hooks.popup(`+${CONFIG.player.healAmount}`, this.player.pos.clone().setY(this.player.pos.y + 2.2), 'heal')
+      },
+      onError: msg => this.hooks.toast(msg, 'warn'),
+      harvestAim: yaw => {
+        const P = this.player
+        const r = this.harvest.target(P.pos.x, P.pos.z, yaw, P.reach + 0.8, 1.0)
+        return r ? Math.atan2(r.x - P.pos.x, r.z - P.pos.z) : null
+      },
+      harvestStrike: (heavy, charge) => this.harvestStrike(heavy, charge),
+      shoot: (from, yaw, motion, charged) => this.slingShot(from, yaw, motion, charged),
+      onCounter: () => {
+        this.hooks.stamp('COUNTER!', 'counter')
+        this.fx.hitstop(0.14)
+        this.audio.play('perfect')
+        this.fx.impactFlash(this.player.pos.clone().setY(this.player.pos.y + 1.2), '#ffe9a8', 3, 0.2)
+      },
+    }
+    this.applyProgress(false)
+    this.player.place(CAMP.spawn.x, CAMP.spawn.z, this.terrain, Math.PI)
+    this.mode = 'title'
+    // Warm up particles and chunk culling before the first frame is shown.
+    const campFocus = new THREE.Vector3(CAMP.x, this.terrain.heightAt(CAMP.x, CAMP.z), CAMP.z)
+    for (let i = 0; i < 30; i += 1) {
+      this.titleCamera(1 / 30)
+      this.scenery.update(1 / 30, i / 30, this.cam.camera, campFocus, this.pixelScale)
+    }
+    progress(1)
+  }
+  get hasSave(): boolean {
+    try {
+      return !!parseProgress(localStorage.getItem(PROGRESS_KEY))
+    } catch {
+      return false
+    }
+  }
+  // ─── Session control ─────────────────────────────────────────────────────
+  start(fresh: boolean): void {
+    let p: Progress | null = null
+    if (!fresh) {
+      try {
+        p = parseProgress(localStorage.getItem(PROGRESS_KEY))
+      } catch {
+        p = null
+      }
+    }
+    this.progress = p ?? newProgress()
+    this.applyProgress(false)
+    for (const c of this.creatures) c.respawn(this.terrain)
+    this.telegraphs.clear()
+    this.fx.clearTransient()
+    this.harvest.reset()
+    this.gadgets.clear()
+    this.tracks.clear()
+    this.huntStart.clear()
+    this.trackSp = (Object.keys(SPECIES) as SpeciesId[]).find(sp => isTracked(this.progress, sp)) ?? null
+    this.pendingHeld = null
+    this.player.revive()
+    this.player.place(CAMP.spawn.x, CAMP.spawn.z, this.terrain, Math.PI)
+    this.cam.snap(this.player.pos, Math.PI)
+    this.lockTarget = null
+    this.focusTarget = null
+    this.boss = null
+    this.lastRegion = null
+    this.mode = 'playing'
+    this.save()
+    if (!this.progress.tips.includes('move')) {
+      this.tip('move', '<b>WASD</b> move · <b>Mouse</b> look · <b>Shift</b> sprint · <b>E</b> interact. Follow the <b>objective marker</b>.')
+    }
+  }
+  toTitle(): void {
+    this.save()
+    this.mode = 'title'
+    this.telegraphs.clear()
+    this.lockTarget = null
+  }
+  pause(): void {
+    if (this.mode === 'playing') this.mode = 'paused'
+  }
+  resume(): void {
+    if (this.mode === 'paused' || this.mode === 'menu') this.mode = 'playing'
+  }
+  openMenu(tab?: MenuTab): void {
+    if (this.mode !== 'playing') return
+    this.mode = 'menu'
+    this.hooks.openMenu(tab)
+  }
+  get atCamp(): boolean {
+    return Math.hypot(this.player.pos.x - CAMP.x, this.player.pos.z - CAMP.z) < CAMP.safeR + 1
+  }
+  save(): void {
+    try {
+      localStorage.setItem(PROGRESS_KEY, JSON.stringify(this.progress))
+    } catch {
+      /* storage unavailable: session-only progress */
+    }
+  }
+  /** Cook and eat a meal at the hearth. `q` comes from the sear gauge. */
+  cookMeal(id: MealId, q: SearQuality): ActionResult {
+    const r = cook(this.progress, id, q)
+    if (!r.ok) {
+      this.audio.play('error')
+      return r
+    }
+    const P = this.player
+    const hpBuff = MEALS[id].buff.hp ?? 0
+    this.applyProgress(false)
+    P.hp = Math.min(P.maxHp, P.hp + hpBuff)
+    P.stamina = P.maxStamina
+    this.audio.play('eat')
+    if (q === 'perfect') this.audio.play('searPerfect')
+    const at = new THREE.Vector3(CAMP.hearth.x, this.terrain.heightAt(CAMP.hearth.x, CAMP.hearth.z) + 1.2, CAMP.hearth.z)
+    this.fx.fountain(at, q === 'charred' ? '#8a6a50' : '#ffcf7a', q === 'perfect' ? 50 : 26, 4)
+    this.fx.embers(at.x, at.y, at.z, q === 'perfect' ? 24 : 10, 1.2)
+    this.save()
+    return r
+  }
+  private applyProgress(animate: boolean): void {
+    const p = this.progress
+    const stats = gearStats(p)
+    const tier = GEAR[p.weapon].tier
+    if (!canHold(p, p.held)) p.held = 'weapon'
+    this.player.setGear(stats, p.weapon, p.armor, tier, p.held)
+    this.camp.setStage(p.campStage, p.towerRestored, animate)
+  }
+  // ─── Camp actions (UI) ───────────────────────────────────────────────────
+  craft(id: RecipeId): ActionResult {
+    const r = craft(this.progress, id)
+    if (r.ok) {
+      this.audio.play('craft')
+      const gear = GEAR[id as GearId]
+      if (gear && gear.slot !== 'tool') {
+        equip(this.progress, gear.id)
+        this.applyProgress(false)
+      } else {
+        this.applyProgress(false)
+        if (gear && (gear.id === 'flintHatchet' || gear.id === 'flintPick')) {
+          const key = HELD_ORDER.indexOf(gear.id) + 1
+          this.hooks.toast(`${gear.name} ready: press ${key} to hold it (1 weapon · 4 bare hands).`, 'good')
+        }
+      }
+      this.fx.fountain(this.player.pos.clone().setY(this.player.pos.y + 1), '#ffe6a0', 30, 4)
+      this.save()
+    } else this.audio.play('error')
+    return r
+  }
+  equip(id: GearId): void {
+    if (equip(this.progress, id)) {
+      this.applyProgress(false)
+      this.audio.play('ui')
+      this.save()
+    }
+  }
+  upgrade(): ActionResult {
+    const r = upgradeCamp(this.progress)
+    if (r.ok) {
+      this.audio.play('upgrade')
+      this.camp.setStage(this.progress.campStage, false, true)
+      this.player.restore()
+      const names = ['', 'Hearth Camp', 'Palisade Camp', 'Stonehold Camp']
+      const subs = ['', 'Crafting and resting unlocked', 'Tier II gear unlocked', 'Tier III gear and the Signal Tower unlocked']
+      this.hooks.banner(names[this.progress.campStage], `Camp stage ${this.progress.campStage} of 3 · ${subs[this.progress.campStage]}`, 'camp')
+      this.save()
+    } else this.audio.play('error')
+    return r
+  }
+  restoreTower(): ActionResult {
+    const r = restoreTower(this.progress)
+    if (r.ok) {
+      this.save()
+      this.mode = 'victory'
+      this.cineT = 0
+      this.camp.setStage(3, true, true)
+      this.camp.celebrateTower()
+      this.audio.play('win')
+      this.audio.playVictory()
+      this.audio.intensity = 0
+      this.hooks.banner('The Signal Tower blazes', 'A rescue fleet turns toward Cinderfall Isle', 'camp')
+      window.setTimeout(() => this.hooks.victory(), 6500)
+    } else this.audio.play('error')
+    return r
+  }
+  /** Keep playing after victory. */
+  keepExploring(): void {
+    this.mode = 'playing'
+  }
+  // ─── World setup ─────────────────────────────────────────────────────────
+  private spawnCreatures(): void {
+    const T = this.terrain
+    let seed = 1
+    const rnd = () => {
+      seed = (seed * 16807) % 2147483647
+      return seed / 2147483647
+    }
+    const spot = (cx: number, cz: number, spread: number, shore: boolean) => {
+      for (let i = 0; i < 60; i += 1) {
+        const a = rnd() * Math.PI * 2
+        const d = rnd() * spread
+        const x = cx + Math.cos(a) * d
+        const z = cz + Math.sin(a) * d
+        if (!T.walkable(x, z) || T.slopeAt(x, z) > 0.6) continue
+        if (shore && T.heightAt(x, z) > 2.6) continue
+        if (!this.colliders.clear(x, z, 1.4)) continue
+        if (Math.hypot(x - CAMP.x, z - CAMP.z) < CAMP.safeR + 12) continue
+        return { x, z }
+      }
+      return { x: cx, z: cz }
+    }
+    for (const g of SPAWNS) {
+      for (let i = 0; i < g.count; i += 1) {
+        const p = spot(g.x, g.z, g.spread, !!g.shore)
+        this.addCreature(new Creature(g.species, p.x, p.z, T))
+      }
+    }
+    this.addCreature(new Creature('ruinhorn', ARENAS.ruins.x + 4, ARENAS.ruins.z, T))
+    this.addCreature(new Creature('vulkarr', ARENAS.wyrm.x, ARENAS.wyrm.z + 2, T))
+  }
+  private addCreature(c: Creature): void {
+    c.rig.root.traverse(o => {
+      if ((o as THREE.Mesh).isMesh) o.castShadow = true
+    })
+    this.creatures.push(c)
+    this.scene.add(c.rig.root)
+  }
+  // ─── Events ──────────────────────────────────────────────────────────────
+  private onCreatureEvent(e: CreatureEvent): void {
+    const c = e.c
+    switch (e.type) {
+      case 'engage':
+        if (!this.huntStart.has(c.id)) this.huntStart.set(c.id, this.progress.playTime)
+        if (c.def.boss) {
+          this.boss = c
+          this.hooks.banner(c.def.name, c.def.title, 'boss')
+        } else if (!this.progress.tips.includes('combat')) {
+          this.tip('combat', '<b>Left click</b> light combo · <b>Hold right click</b> charged heavy · <b>Space</b> dodge through attacks. Red zones show where attacks will land — punish the recovery!')
+        } else if (!this.progress.tips.includes('lock')) {
+          this.tip('lock', 'Press <b>Q</b> (or middle mouse) to lock on and keep the creature framed.')
+        }
+        break
+      case 'enrage':
+        this.hooks.toast(`${c.def.name} is enraged! Attacks come faster.`, 'warn')
+        this.fx.shake(0.6)
+        break
+      case 'stagger':
+        this.hooks.popup('STAGGER', c.center(this.v.clone()).setY(c.pos.y + c.def.height + 0.6), 'big')
+        break
+      case 'killed': {
+        const p = this.progress
+        const first = !(p.hunts[c.def.id] ?? 0)
+        p.hunts[c.def.id] = (p.hunts[c.def.id] ?? 0) + 1
+        c.carvesLeft += gearStats(p).carves
+        const t0 = this.huntStart.get(c.id)
+        this.huntStart.delete(c.id)
+        noteHunt(p, c.def.id, t0 !== undefined ? p.playTime - t0 : 0)
+        const wasTracked = isTracked(p, c.def.id)
+        clearTrack(p, c.def.id)
+        if (this.trackSp === c.def.id) {
+          this.trackSp = null
+          this.trackPos = null
+        }
+        this.hooks.journal(c.def.id, first ? `${c.def.name}: attacks, weak spot and drops recorded` : `${c.def.name}: hunt #${p.hunts[c.def.id]} recorded`)
+        if (wasTracked) this.hooks.toast('Trail spent. Study fresh clues to track another.', 'info')
+        if (this.lockTarget === c) this.lockTarget = null
+        if (c.def.boss) {
+          if (c.def.id === 'ruinhorn') p.bosses.ruinhorn = true
+          if (c.def.id === 'vulkarr') p.bosses.vulkarr = true
+          this.boss = null
+          this.hooks.banner(`${c.def.name} hunted`, 'Carve its body with E — it holds what the tower needs', 'boss')
+          this.audio.play('win')
+        } else {
+          this.hooks.popup(`${c.
+===== src/game/config.ts (1857 bytes) =====
+/**
+ * All gameplay tuning in one place. Change numbers here before touching game code; Tweak reads
+ * and writes these same values in development previews.
+ */
+export const DEFAULT_CONFIG = {
+  player: {
+    radius: 0.55,
+    walkSpeed: 5.2,
+    sprintSpeed: 8.6,
+    acceleration: 38,
+    turnSpeed: 12,
+    maxStamina: 100,
+    /** Stamina regained per second after `staminaDelay` seconds without spending. */
+    staminaRegen: 34,
+    staminaDelay: 0.55,
+    sprintCost: 14,
+    dodgeCost: 24,
+    dodgeSpeed: 13,
+    dodgeTime: 0.42,
+    /** Invulnerable window inside the roll, measured from its start. */
+    iframeStart: 0.03,
+    iframeEnd: 0.3,
+    heavyCost: 18,
+    healTime: 1.1,
+    healAmount: 45,
+    /** Health lost per second in the caldera heat zone without heat protection. */
+    heatDamage: 7,
+  },
+  combat: {
+    /** Global damage multiplier for the player's attacks. */
+    playerDamage: 1,
+    /** Global damage multiplier for monster attacks. */
+    monsterDamage: 1,
+    hitstop: 0.06,
+    /** Multiplier on monster windups: >1 makes telegraphs longer and easier to read. */
+    telegraphScale: 1,
+    lockRange: 34,
+  },
+  camera: {
+    distance: 6.8,
+    height: 2.1,
+    minPitch: -0.5,
+    maxPitch: 1.05,
+    follow: 12,
+    fov: 60,
+  },
+  expedition: {
+    /** Seconds a depleted gather node takes to regrow. */
+    nodeRespawn: 70,
+    /** Seconds before a hunted small creature returns. */
+    creatureRespawn: 95,
+  },
+} as const
+// Gameplay always reads active values here. Source defaults remain immutable for
+// Tweak Reset and Save with Manus; Apply never writes source or local storage.
+type MutableConfig<T> = { -readonly [K in keyof T]: T[K] extends number ? number : T[K] extends object ? MutableConfig<T[K]> : T[K] }
+export const CONFIG: MutableConfig<typeof DEFAULT_CONFIG> = structuredClone(DEFAULT_CONFIG)
+-- source-ish file paths --
+scripts/__manus__/game-tuning.js 2273
+scripts/__manus__/preview-parent.js 1725
+scripts/check-size.mjs 2118
+scripts/clean_icons.py 2355
+scripts/harvestplay.mjs 5286
+scripts/hshot.mjs 618
+scripts/huntplay.mjs 7293
+scripts/labshots.mjs 1308
+scripts/manus-game-sharing/build.mjs 1775
+scripts/manus-game-sharing/metadata.mjs 23148
+scripts/manus-tuning/adapter.d.ts 265
+scripts/manus-tuning/adapter.js 1500
+scripts/manus-tuning/identity.mjs 910
+scripts/manus-tuning/vite.d.mts 77
+scripts/manus-tuning/vite.mjs 1448
+scripts/merge-anims.mjs 2542
+scripts/optimize-env.mjs 2713
+scripts/optimize-models.mjs 3448
+scripts/play.mjs 7162
+scripts/probe.mjs 1387
+scripts/profile-render.mjs 4821
+scripts/render_map.py 1787
+scripts/shots.mjs 1069
+scripts/smoke.mjs 5658
+scripts/tripo.mjs 3889
+scripts/vegprobe.mjs 2312
+src/engine/assets.ts 7334
+src/engine/audio.ts 15129
+src/engine/input.ts 7061
+src/engine/loop.ts 2144
+src/engine/manifest.json 3300
+src/engine/renderer.ts 3925
+src/engine/save.ts 4023
+src/game/camera.ts 3403
+src/game/camp.ts 19007
+src/game/colliders.ts 2690
+src/game/config.ts 1857
+src/game/creatureModels.ts 22359
+src/game/creatureSkin.ts 10900
+src/game/creatures.ts 49785
+src/game/data.ts 34142
+src/game/fx.ts 23535
+src/game/gadgets.ts 12431
+src/game/game.ts 55861
+src/game/harvest.ts 21068
+src/game/hunterModel.ts 14730
+src/game/materials.ts 13507
+src/game/nodes.ts 13410
+src/game/noise.ts 3082
+src/game/player.ts 48162
+src/game/props.ts 23444
+src/game/rules.ts 23406
+src/game/scenery.ts 60937
+src/game/telegraphs.ts 6431
+src/game/terrain.ts 13301
+src/game/toolModels.ts 2577
+src/game/tracks.ts 13362
+src/game/tuning.ts 5055
+src/lab.ts 19916
+src/main.ts 8058
+src/styles/lab.css 4937
+src/styles/main.css 24810
+src/styles/skin.css 31456
+src/ui/icons.ts 7119
+src/ui/ui.ts 65331
+src/ui/uifx.ts 9510
+tests/hunt.test.ts 5843
+tests/preview.test.mjs 1380
+tests/rules.test.ts 7340
+tests/scenery.test.ts 1278
+tests/terrain.test.ts 3019
+[32mubuntu@sandbox:~/savageclash$ [0m

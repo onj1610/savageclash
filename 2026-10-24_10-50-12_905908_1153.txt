@@ -1,0 +1,653 @@
+# Terminal Full Output
+# Terminal: default-1
+# Command: node --input-type=module <<'JS'
+import { spawn } from 'node:child_process';
+import { readFileSync } from 'node:fs';
+import { chromium } from 'playwright';
+const root=process.cwd(), port=4918, base=`http://127.0.0.1:${port}`;
+const lock=JSON.parse(readFileSync('assets.lock.json','utf8'));
+const map=new Map(Object.entries(lock.assets).map(([relative,e])=>[e.path,{relative,e}]));
+const server=spawn(process.execPath,['node_modules/vite/bin/vite.js','preview','--port',String(port),'--strictPort','--host','127.0.0.1'],{cwd:root,stdio:'ignore'});
+let browser;
+try {
+ for(let i=0;i<80;i++){try{if((await fetch(base)).ok)break}catch{} await new Promise(r=>setTimeout(r,250))}
+ browser=await chromium.launch({args:['--ignore-gpu-blocklist']});
+ const c=await browser.newContext({viewport:{width:1280,height:720},locale:'ja-JP'});
+ const requests=[], errors=[];
+ c.on('request',r=>{if(r.url().includes('/manus-storage/'))requests.push({url:new URL(r.url()).pathname,kind:'request'})});
+ c.on('response',r=>{if(r.url().includes('/manus-storage/'))requests.push({url:new URL(r.url()).pathname,status:r.status(),kind:'response'})});
+ await c.route('**/manus-storage/game/sha256/**',async r=>{const u=new URL(r.request().url()).pathname, a=map.get(u); if(!a){errors.push(`unregistered ${u}`); return r.fulfill({status:404,body:'no asset'})}; const body=readFileSync(a.relative); if(body.length!==a.e.size)errors.push(`size mismatch ${a.relative}`); return r.fulfill({status:200,contentType:a.relative.endsWith('.glb')?'model/gltf-binary':a.relative.endsWith('.mp3')?'audio/mpeg':a.relative.endsWith('.webp')?'image/webp':'application/octet-stream',headers:{'Access-Control-Allow-Origin':'*'},body})});
+ const p=await c.newPage();p.on('console',m=>{if(m.type()==='error')errors.push(`console ${m.text()}`)});p.on('pageerror',e=>errors.push(`page ${e}`));
+ await p.goto(`${base}/enemies/?species=ruinhorn`,{waitUntil:'domcontentloaded'}); console.log('dom loaded');
+ await p.waitForTimeout(12000);
+ console.log('state',JSON.stringify(await p.evaluate(()=>({title:document.title,lang:document.documentElement.lang,name:document.querySelector('#lab [data-el="name"]')?.textContent,selected:document.querySelector('#lab [data-sp].on')?.getAttribute('data-sp'),spButton:document.querySelector('#lab [data-sp="ruinhorn"]')?.textContent,creature:window.__lab?.creature?{id:window.__lab.creature.def?.id,name:window.__lab.creature.def?.name,model:!!window.__lab.creature.rig?.model}:null,canvas:(()=>{let e=document.querySelector('#lab canvas');return e&&[e.clientWidth,e.clientHeight]})()})),null,2));
+ console.log('requests',JSON.stringify(requests,null,2)); console.log('errors',JSON.stringify(errors,null,2));
+} finally {await browser?.close();server.kill('SIGTERM')}
+JS
+# PID: 1153
+# Timestamp: 2026-10-24_10-50-12.905908
+# Original Length: 24631 characters
+# ----------------------------------------
+
+[32mubuntu@sandbox:~/savageclash$ [0mnode --input-type=module <<'JS'
+import { spawn } from 'node:child_process';
+import { readFileSync } from 'node:fs';
+import { chromium } from 'playwright';
+const root=process.cwd(), port=4918, base=`http://127.0.0.1:${port}`;
+const lock=JSON.parse(readFileSync('assets.lock.json','utf8'));
+const map=new Map(Object.entries(lock.assets).map(([relative,e])=>[e.path,{relative,e}]));
+const server=spawn(process.execPath,['node_modules/vite/bin/vite.js','preview','--port',String(port),'--strictPort','--host','127.0.0.1'],{cwd:root,stdio:'ignore'});
+let browser;
+try {
+ for(let i=0;i<80;i++){try{if((await fetch(base)).ok)break}catch{} await new Promise(r=>setTimeout(r,250))}
+ browser=await chromium.launch({args:['--ignore-gpu-blocklist']});
+ const c=await browser.newContext({viewport:{width:1280,height:720},locale:'ja-JP'});
+ const requests=[], errors=[];
+ c.on('request',r=>{if(r.url().includes('/manus-storage/'))requests.push({url:new URL(r.url()).pathname,kind:'request'})});
+ c.on('response',r=>{if(r.url().includes('/manus-storage/'))requests.push({url:new URL(r.url()).pathname,status:r.status(),kind:'response'})});
+ await c.route('**/manus-storage/game/sha256/**',async r=>{const u=new URL(r.request().url()).pathname, a=map.get(u); if(!a){errors.push(`unregistered ${u}`); return r.fulfill({status:404,body:'no asset'})}; const body=readFileSync(a.relative); if(body.length!==a.e.size)errors.push(`size mismatch ${a.relative}`); return r.fulfill({status:200,contentType:a.relative.endsWith('.glb')?'model/gltf-binary':a.relative.endsWith('.mp3')?'audio/mpeg':a.relative.endsWith('.webp')?'image/webp':'application/octet-stream',headers:{'Access-Control-Allow-Origin':'*'},body})});
+ const p=await c.newPage();p.on('console',m=>{if(m.type()==='error')errors.push(`console ${m.text()}`)});p.on('pageerror',e=>errors.push(`page ${e}`));
+ await p.goto(`${base}/enemies/?species=ruinhorn`,{waitUntil:'domcontentloaded'}); console.log('dom loaded');
+ await p.waitForTimeout(12000);
+ console.log('state',JSON.stringify(await p.evaluate(()=>({title:document.title,lang:document.documentElement.lang,name:document.querySelector('#lab [data-el="name"]')?.textContent,selected:document.querySelector('#lab [data-sp].on')?.getAttribute('data-sp'),spButton:document.querySelector('#lab [data-sp="ruinhorn"]')?.textContent,creature:window.__lab?.creature?{id:window.__lab.creature.def?.id,name:window.__lab.creature.def?.name,model:!!window.__lab.creature.rig?.model}:null,canvas:(()=>{let e=document.querySelector('#lab canvas');return e&&[e.clientWidth,e.clientHeight]})()})),null,2));
+ console.log('requests',JSON.stringify(requests,null,2)); console.log('errors',JSON.stringify(errors,null,2));
+} finally {await browser?.close();server.kill('SIGTERM')}
+JS
+{
+source /home/ubuntu/.user_env && source '/var/lib/manus/addon-projects/b50e2b01695173989ef0ea61aa9a427dff8f71f71f7383bc7f1fbcfbc39b69ec.env' && cd /home/ubuntu/savageclash && node --input-type=module <<'JS'
+import { spawn } from 'node:child_process';
+import { readFileSync } from 'node:fs';
+import { chromium } from 'playwright';
+const root=process.cwd(), port=4918, base=`http://127.0.0.1:${port}`;
+const lock=JSON.parse(readFileSync('assets.lock.json','utf8'));
+const map=new Map(Object.entries(lock.assets).map(([relative,e])=>[e.path,{relative,e}]));
+const server=spawn(process.execPath,['node_modules/vite/bin/vite.js','preview','--port',String(port),'--strictPort','--host','127.0.0.1'],{cwd:root,stdio:'ignore'});
+let browser;
+try {
+ for(let i=0;i<80;i++){try{if((await fetch(base)).ok)break}catch{} await new Promise(r=>setTimeout(r,250))}
+ browser=await chromium.launch({args:['--ignore-gpu-blocklist']});
+ const c=await browser.newContext({viewport:{width:1280,height:720},locale:'ja-JP'});
+ const requests=[], errors=[];
+ c.on('request',r=>{if(r.url().includes('/manus-storage/'))requests.push({url:new URL(r.url()).pathname,kind:'request'})});
+ c.on('response',r=>{if(r.url().includes('/manus-storage/'))requests.push({url:new URL(r.url()).pathname,status:r.status(),kind:'response'})});
+ await c.route('**/manus-storage/game/sha256/**',async r=>{const u=new URL(r.request().url()).pathname, a=map.get(u); if(!a){errors.push(`unregistered ${u}`); return r.fulfill({status:404,body:'no asset'})}; const body=readFileSync(a.relative); if(body.length!==a.e.size)errors.push(`size mismatch ${a.relative}`); return r.fulfill({status:200,contentType:a.relative.endsWith('.glb')?'model/gltf-binary':a.relative.endsWith('.mp3')?'audio/mpeg':a.relative.endsWith('.webp')?'image/webp':'application/
+octet-stream',headers:{'Access-Control-Allow-Origin':'*'},body})});
+ const p=await c.newPage();p.on('console',m=>{if(m.type()==='error')errors.push(`console ${m.text()}`)});p.on('pageerror',e=>errors.push(`page ${e}`));
+ await p.goto(`${base}/enemies/?species=ruinhorn`,{waitUntil:'domcontentloaded'}); console.log('dom loaded');
+ await p.waitForTimeout(12000);
+ console.log('state',JSON.stringify(await p.evaluate(()=>({title:document.title,lang:document.documentElement.lang,name:document.querySelector('#lab [data-el="name"]')?.textContent,selected:document.querySelector('#lab [data-sp].on')?.getAttribute('data-sp'),spButton:document.querySelector('#lab [data-sp="ruinhorn"]')?.textContent,creature:window.__lab?.creature?{id:window.__lab.creature.def?.id,name:window.__lab.creature.def?.name,model:!!window.__lab.creature.rig?.model}:null,canvas:(()=>{let 
+e=document.querySelector('#lab canvas');return e&&[e.clientWidth,e.clientHeight]})()})),null,2));
+ console.log('requests',JSON.stringify(requests,null,2)); console.log('errors',JSON.stringify(errors,null,2));
+} finally {await browser?.close();server.kill('SIGTERM')}
+JS
+}
+dom loaded
+state {
+  "title": "原始の夜明け：野生との戦い｜敵研究室",
+  "lang": "ja",
+  "name": "ルインホーン",
+  "selected": "ruinhorn",
+  "spButton": "ルインホーン頂点捕食者 · アンバーバック高地",
+  "creature": {
+    "id": "ruinhorn",
+    "name": "ルインホーン",
+    "model": true
+  },
+  "canvas": [
+    650,
+    720
+  ]
+}
+requests [
+  {
+    "url": "/manus-storage/game/sha256/b3976c5969c8b1afd81dc3e314b61d8ffe3f3f58cf40906443105d330e6e0bdf.woff2",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/438fbf4582548e76b266a738f2c11bcbd5137978f2d2e2f3aaabd49df69186f2.woff2",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/67737c139df1a7fa65c63f0b7a1411624741efcb543f5f11d680502aedc2ee73.glb",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/547436a3dd3ed4bc6a6acd3f0841c731ac71052a6b69414f287a6b786fff0c8e.glb",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/8b93598836724e9ad99cdcf0c2c8fdc83321254969706c6d806e32df6d4a19e5.glb",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/e7e7a29eb14693f99a6fdeaecf005628f1c9e344737978840ac3a1e17b9a157c.glb",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/4f3a4a79c5389366a9f3e068d302cda5c5ef7d6f048f5c032308398614c0c790.webp",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/a391b26cb5621b5f53274cd0457bf3f681dc42335985466e367184614e516d58.webp",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/b3976c5969c8b1afd81dc3e314b61d8ffe3f3f58cf40906443105d330e6e0bdf.woff2",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/438fbf4582548e76b266a738f2c11bcbd5137978f2d2e2f3aaabd49df69186f2.woff2",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/4f3a4a79c5389366a9f3e068d302cda5c5ef7d6f048f5c032308398614c0c790.webp",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/a391b26cb5621b5f53274cd0457bf3f681dc42335985466e367184614e516d58.webp",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/67737c139df1a7fa65c63f0b7a1411624741efcb543f5f11d680502aedc2ee73.glb",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/547436a3dd3ed4bc6a6acd3f0841c731ac71052a6b69414f287a6b786fff0c8e.glb",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/8b93598836724e9ad99cdcf0c2c8fdc83321254969706c6d806e32df6d4a19e5.glb",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/e7e7a29eb14693f99a6fdeaecf005628f1c9e344737978840ac3a1e17b9a157c.glb",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/4a7c680dde58513c05b26cc7e0d3cde26ed0508934ea8141bcac131f4f768a0e.woff2",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/8c3429f92ec5f7972c147442076721a6b9a5a80865c1ad0438a0366c1892cf64.webp",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/c82bfb3b1388b50852e89741b435521b90685f4fcf3f06ab2c4c0768faaae3f4.webp",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/8c3429f92ec5f7972c147442076721a6b9a5a80865c1ad0438a0366c1892cf64.webp",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/c82bfb3b1388b50852e89741b435521b90685f4fcf3f06ab2c4c0768faaae3f4.webp",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/b80d724bdfc10b8dda5925029defbf81bbd486717bd4cdcc97e979eea2ef3db8.webp",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/b80d724bdfc10b8dda5925029defbf81bbd486717bd4cdcc97e979eea2ef3db8.webp",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/4a7c680dde58513c05b26cc7e0d3cde26ed0508934ea8141bcac131f4f768a0e.woff2",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/ef3930ad83c5a9e42d9cd33735ceebca8b18b9ba9335edaea24be7909b25617d.webp",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/a9e08afd7e6fce716d5e463644b14fee283dae594e65194a7bfe2179f571c92e.webp",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/ab5b3fa842d4fde8e523513548f5c78c76cb2a16d904684c5260c1d387a40373.webp",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/ef3930ad83c5a9e42d9cd33735ceebca8b18b9ba9335edaea24be7909b25617d.webp",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/a9e08afd7e6fce716d5e463644b14fee283dae594e65194a7bfe2179f571c92e.webp",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/ab5b3fa842d4fde8e523513548f5c78c76cb2a16d904684c5260c1d387a40373.webp",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/30100d51b594d928958c791a3c5c181fdcb7c99764b4bca473659195aa7876a1.webp",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/6e647d46cd2754067bfec44ef3fb18237d62aaf804ec40833cad14da7b1d9df1.webp",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/ffee919975168c8d9f008a5a44e7a22f18693fd6dd009c3a41a0c663cf59759f.webp",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/30100d51b594d928958c791a3c5c181fdcb7c99764b4bca473659195aa7876a1.webp",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/6e647d46cd2754067bfec44ef3fb18237d62aaf804ec40833cad14da7b1d9df1.webp",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/ffee919975168c8d9f008a5a44e7a22f18693fd6dd009c3a41a0c663cf59759f.webp",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/6f979beaca54307011ef3f0f20d0ab38bc8138ae08504b97b1929914e5494028.webp",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/c01579ed1d7293761338d8440847a9fca6a63af3280c4e30395a03039afdc442.webp",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/deec859245f312ae03603ead4252d5e97cb76ce9c83bc9a028b3e169bb1ccac7.mp3",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/6f979beaca54307011ef3f0f20d0ab38bc8138ae08504b97b1929914e5494028.webp",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/c01579ed1d7293761338d8440847a9fca6a63af3280c4e30395a03039afdc442.webp",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/deec859245f312ae03603ead4252d5e97cb76ce9c83bc9a028b3e169bb1ccac7.mp3",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/50915c49d0c620889374f37ae7784f91367ada2c8682dd42b8b382c15b1a6d0d.glb",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/77cf0f6a2d9cc0f47b523b2cb00be85648cbb619bb30e31fef29f59029ce3c74.glb",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/0ea2e4e1af6b2212f091e47af47c0597c5e6bf1bc4aa6333d11e3f0286ccc957.glb",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/326f5975c634f4919115902cf665a89977b536791b85b1dfe338d76870e3912e.glb",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/50915c49d0c620889374f37ae7784f91367ada2c8682dd42b8b382c15b1a6d0d.glb",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/cff2657ccbafe6b85c64958e3f0a638a39c16e5a8459c4165a7c007475cd3c74.glb",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/77cf0f6a2d9cc0f47b523b2cb00be85648cbb619bb30e31fef29f59029ce3c74.glb",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/d2d02d34982fe157b97d98f059260aae82774a3fe0c986e1975765d0854f05c2.glb",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/0ea2e4e1af6b2212f091e47af47c0597c5e6bf1bc4aa6333d11e3f0286ccc957.glb",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/326f5975c634f4919115902cf665a89977b536791b85b1dfe338d76870e3912e.glb",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/cff2657ccbafe6b85c64958e3f0a638a39c16e5a8459c4165a7c007475cd3c74.glb",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/d2d02d34982fe157b97d98f059260aae82774a3fe0c986e1975765d0854f05c2.glb",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/36b89c7544f3ef8ea07a3f03303e55527a9711f79a462f308576515c04ba06e0.mp3",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/0bd1eaac90e65d0f108fb4204efee636c6e91561c8e0975673b043d368802fa8.mp3",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/5493778dc62dab6c388d51c084ffecd6b40d771c7bef9ebd9a51328832e7f85e.mp3",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/c17c0e1000801ae047958473e878f1c703795a986aeee27624b2da0747b2a1e7.mp3",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/36b89c7544f3ef8ea07a3f03303e55527a9711f79a462f308576515c04ba06e0.mp3",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/96c698872960a32dbaea98133cf58842c35979ff5e2ec90b160823ddf4869f1d.mp3",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/0bd1eaac90e65d0f108fb4204efee636c6e91561c8e0975673b043d368802fa8.mp3",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/5493778dc62dab6c388d51c084ffecd6b40d771c7bef9ebd9a51328832e7f85e.mp3",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/c17c0e1000801ae047958473e878f1c703795a986aeee27624b2da0747b2a1e7.mp3",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/96c698872960a32dbaea98133cf58842c35979ff5e2ec90b160823ddf4869f1d.mp3",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/6696f2a223a5a0ca7534196b7f0fd352b9a975c36f97677cb79cb8bb8794d844.mp3",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/c510ac2e7b3cd80693b0faa15ef4675cfe6695232535e626d934384d376f667c.mp3",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/36750cbafa9e22c76e82b863e8d769d92c87e5ed99d2789ae20557d66ba825f7.mp3",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/1acfb0570e47495a3655385ae4a0f60c8d84a49a217f15e3f41601ea480b8a25.mp3",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/6696f2a223a5a0ca7534196b7f0fd352b9a975c36f97677cb79cb8bb8794d844.mp3",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/c510ac2e7b3cd80693b0faa15ef4675cfe6695232535e626d934384d376f667c.mp3",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/36750cbafa9e22c76e82b863e8d769d92c87e5ed99d2789ae20557d66ba825f7.mp3",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/1acfb0570e47495a3655385ae4a0f60c8d84a49a217f15e3f41601ea480b8a25.mp3",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/ca9774546def21bddafd321dd4b41532fc406d05d217f90db33ed8ed2bccd842.mp3",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/a4ebd833a01e991e137ce4625f102b5ec86ac8115c21ca69f52c5f1c4db17e1f.mp3",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/ca9774546def21bddafd321dd4b41532fc406d05d217f90db33ed8ed2bccd842.mp3",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/a4ebd833a01e991e137ce4625f102b5ec86ac8115c21ca69f52c5f1c4db17e1f.mp3",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/b38a675d42f3375c6d8c0925c50bc1ae6a898b7cc34704de202d5af7f1a96fd2.mp3",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/671c76ad56a0baa9251ff151bcf4b9f42d0cbc7519525d8aaf741a16e07fbeca.mp3",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/a18a081c7546019fe072d85de077f9f69018e6e55f1b7f0dbea37036c9f60223.mp3",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/716ac8160f24f782779f8a87b5baa29fa08d65be225e8a0a276e06c0e6ba1a02.mp3",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/b38a675d42f3375c6d8c0925c50bc1ae6a898b7cc34704de202d5af7f1a96fd2.mp3",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/671c76ad56a0baa9251ff151bcf4b9f42d0cbc7519525d8aaf741a16e07fbeca.mp3",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/d5362524e0b507e86d23f8940fd90ae5977561865fb5e31d24840db3e850c04e.mp3",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/a18a081c7546019fe072d85de077f9f69018e6e55f1b7f0dbea37036c9f60223.mp3",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/87b0bcfb79280af3a760af8d003ef752a78509abd2af67e50823cace37c9f5cb.mp3",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/716ac8160f24f782779f8a87b5baa29fa08d65be225e8a0a276e06c0e6ba1a02.mp3",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/d5362524e0b507e86d23f8940fd90ae5977561865fb5e31d24840db3e850c04e.mp3",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/87b0bcfb79280af3a760af8d003ef752a78509abd2af67e50823cace37c9f5cb.mp3",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/27c122eec42ef403b8aadd9af6731b6326310510feaae6e25ad1b0f56046c35b.mp3",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/27c122eec42ef403b8aadd9af6731b6326310510feaae6e25ad1b0f56046c35b.mp3",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/d59edfa95a75b7fea18eb85d55263f82071864ea5e2d643cfd5a725e66e209f5.glb",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/9bcbc00f2d82a127bc1def2bacbc20d264f6419ee6b93827200ce51d0d64b0b9.glb",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/e8cbbe44e2250992bfe9ea5fd05eb6d9343af93f59a77e9d5f8485b65ae5720f.glb",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/be59d5b426fceb11b45ee44b5ccd489929e237bdeea40e31424869687849eaa3.glb",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/858524d28629d117ff00faf7a7603c3c9e50af1659d70575af6e89d3105b1e6c.glb",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/e53fda90c28a4851f0b4acf885eafbbb1ef9d82c34bfbdfe164d71a22d234343.glb",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/d59edfa95a75b7fea18eb85d55263f82071864ea5e2d643cfd5a725e66e209f5.glb",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/9bcbc00f2d82a127bc1def2bacbc20d264f6419ee6b93827200ce51d0d64b0b9.glb",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/e8cbbe44e2250992bfe9ea5fd05eb6d9343af93f59a77e9d5f8485b65ae5720f.glb",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/be59d5b426fceb11b45ee44b5ccd489929e237bdeea40e31424869687849eaa3.glb",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/858524d28629d117ff00faf7a7603c3c9e50af1659d70575af6e89d3105b1e6c.glb",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/e53fda90c28a4851f0b4acf885eafbbb1ef9d82c34bfbdfe164d71a22d234343.glb",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/2ca75efa0e5ca4c1c6552420c333c224a4e7043bc56bb2236b1d926e386cf6d4.glb",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/e47893a89cf2974f29b429b379ca2ba3ec8cef23c91bb2bfcd9495f4cb0a881d.mp3",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/2ca75efa0e5ca4c1c6552420c333c224a4e7043bc56bb2236b1d926e386cf6d4.glb",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/d48c4535faaea4d4da9307ceb213fc3fbf94de62da8a88d601d20b74590d74a8.mp3",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/540722a87ede1d462ce36ae2350853383713ae4504c53f107f1d0feb504fc9d4.mp3",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/e47893a89cf2974f29b429b379ca2ba3ec8cef23c91bb2bfcd9495f4cb0a881d.mp3",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/d48c4535faaea4d4da9307ceb213fc3fbf94de62da8a88d601d20b74590d74a8.mp3",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/540722a87ede1d462ce36ae2350853383713ae4504c53f107f1d0feb504fc9d4.mp3",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/63121c50c7a3bb464ab1837de37c184a7c990ea70106452f043becb2411923d8.mp3",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/3d03c3faca71418f1485d1edfdfeb79b555030290e6c27f5e277a790c8be04dc.mp3",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/ef2923344fc3aea49da06a1493c0be0db2826b4e236e64a995f2874afdf47547.mp3",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/bc5dfa9a9adcaa8a6c47e4b5cae9daa46451c5b6eadc6bcf545cc584a18f18e9.mp3",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/eb5f95c9ef8e2b79e4c33c40be6e9e47bd03f24b5ebf96e471a16f06d47383e6.mp3",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/63121c50c7a3bb464ab1837de37c184a7c990ea70106452f043becb2411923d8.mp3",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/3d03c3faca71418f1485d1edfdfeb79b555030290e6c27f5e277a790c8be04dc.mp3",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/ef2923344fc3aea49da06a1493c0be0db2826b4e236e64a995f2874afdf47547.mp3",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/bc5dfa9a9adcaa8a6c47e4b5cae9daa46451c5b6eadc6bcf545cc584a18f18e9.mp3",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/eb5f95c9ef8e2b79e4c33c40be6e9e47bd03f24b5ebf96e471a16f06d47383e6.mp3",
+    "status": 200,
+    "kind": "response"
+  },
+  {
+    "url": "/manus-storage/game/sha256/3f0f6784326c24ce74bbe2cf1cf81814c6a2592850ef1a1572411d585a5c4399.mp3",
+    "kind": "request"
+  },
+  {
+    "url": "/manus-storage/game/sha256/3f0f6784326c24ce74bbe2cf1cf81814c6a2592850ef1a1572411d585a5c4399.mp3",
+    "status": 200,
+    "kind": "response"
+  }
+]
+errors []
+[32mubuntu@sandbox:~/savageclash$ [0m

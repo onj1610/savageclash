@@ -1,0 +1,149 @@
+# Terminal Full Output
+# Terminal: default-1
+# Command: python3 - <<'PY'
+import json
+from pathlib import Path
+p=json.load(open('assets.lock.json'))
+print('groups',p.get('groups'))
+assets=p.get('assets',{})
+print('count',len(assets))
+from collections import Counter
+print('group counts',Counter(v.get('groupId') for v in assets.values()))
+for k,v in sorted(assets.items()):
+ if k.startswith('assets/fonts/') or k.endswith('share/og.png') or k.endswith('share/favicon.png'):
+  print(k,v.get('assetType'),v.get('groupId'),v.get('path'))
+print('font files:')
+for x in sorted(Path('assets/fonts').rglob('*')):
+ if x.is_file(): print(x, x.stat().st_size)
+PY
+printf '\n-- Species records and visible labels --\n'
+rg -n "export const SPECIES|name: '|title: '|habitat: '|lore: '|weak: \{" src/game/data.ts | tail -90
+printf '\n-- Creature events --\n'
+rg -n "type CreatureEvent|emit\(\{ type|emit\(\{[[:space:]]*type" src/game/creatures.ts
+# PID: 1153
+# Timestamp: 2026-10-24_09-53-05.861179
+# Original Length: 18045 characters
+# ----------------------------------------
+
+[32mubuntu@sandbox:~/savageclash$ [0mpython3 - <<'PY'
+import json
+from pathlib import Path
+p=json.load(open('assets.lock.json'))
+print('groups',p.get('groups'))
+assets=p.get('assets',{})
+print('count',len(assets))
+from collections import Counter
+print('group counts',Counter(v.get('groupId') for v in assets.values()))
+for k,v in sorted(assets.items()):
+ if k.startswith('assets/fonts/') or k.endswith('share/og.png') or k.endswith('share/favicon.png'):
+  print(k,v.get('assetType'),v.get('groupId'),v.get('path'))
+print('font files:')
+for x in sorted(Path('assets/fonts').rglob('*')):
+ if x.is_file(): print(x, x.stat().st_size)
+PY
+printf '\n-- Species records and visible labels --\n'
+rg -n "export const SPECIES|name: '|title: '|habitat: '|lore: '|weak: \{" src/game/data.ts | tail -90
+printf '\n-- Creature events --\n'
+rg -n "type CreatureEvent|emit\(\{ type|emit\(\{[[:space:]]*type" src/game/creatures.ts
+groups {'hunter-equipment': {'name': '狩人と装備', 'order': 10}, 'wildlife': {'name': '野生の獣', 'order': 20}, 'island-world': {'name': '島と地域', 'order': 30}, 'fieldcraft': {'name': '狩猟・採集・野営', 'order': 40}, 'combat-effects': {'name': '戦闘と演出', 'order': 50}, 'game-interface': {'name': 'ゲーム画面と共有素材', 'order': 60}}
+count 154
+group counts Counter({'fieldcraft': 51, 'combat-effects': 25, 'wildlife': 23, 'island-world': 21, 'game-interface': 21, 'hunter-equipment': 13})
+assets/fonts/Figtree-VF.subset.woff2 font game-interface /manus-storage/game/sha256/b3976c5969c8b1afd81dc3e314b61d8ffe3f3f58cf40906443105d330e6e0bdf.woff2
+assets/fonts/NotoSansJP-subset.woff2 font game-interface /manus-storage/game/sha256/4a7c680dde58513c05b26cc7e0d3cde26ed0508934ea8141bcac131f4f768a0e.woff2
+assets/fonts/Sora-VF.subset.woff2 font game-interface /manus-storage/game/sha256/438fbf4582548e76b266a738f2c11bcbd5137978f2d2e2f3aaabd49df69186f2.woff2
+assets/share/favicon.png image game-interface /manus-storage/game/sha256/c46e834b31893ab5ef0b9f99b67a2b35553688c65832f38943b05e33ff2a610f.png
+assets/share/og.png image game-interface /manus-storage/game/sha256/84c16bcc497e67b7b9cb1b19658ef80a1bd3a2d45b366049efbc986a1564b10e.png
+font files:
+assets/fonts/Figtree-VF.subset.woff2 23660
+assets/fonts/NotoSansJP-subset.woff2 2117064
+assets/fonts/Sora-VF.subset.woff2 41696
+-- Species records and visible labels --
+82:  heartyHaunch: { id: 'heartyHaunch', name: '肉厚ステーキ', stage: 1, cost: { meat: 2 }, buff: { hp: 25 }, desc: '最大体力+25' },
+83:  trailStew: { id: 'trailStew', name: '旅人のシチュー', stage: 1, cost: { meat: 1, herb: 2 }, buff: { stamina: 30, staRegen: 0.2 }, desc: '最大スタミナ+30、スタミナ回復+20%' },
+84:  snapperBroth: { id: 'snapperBroth', name: 'スナッパーのスープ', stage: 1, cost: { meat: 1, snapperScale: 1, herb: 1 }, buff: { dodgeCost: 0.25, defense: 0.08 }, desc: '回避のスタミナ消費-25%、防御力+8%' },
+85:  brimstoneSkewer: { id: 'brimstoneSkewer', name: '硫黄焼き', stage: 2, cost: { meat: 1, sulfur: 1 }, buff: { attack: 0.12, heatSlow: 0.6 }, desc: '攻撃力+12%、火口の熱による消耗が60%減少' },
+111:  club: { name: '棍棒', speed: 1.15, motion: 1, reach: 0, arc: 1, desc: '扱いやすく素早い。3連撃と溜め強打が使える。' },
+112:  maul: { name: '大槌', speed: 0.85, motion: 1.3, reach: 0.2, arc: 1.1, desc: '遅いが強烈。最大まで溜めると必ず体勢を崩す。' },
+113:  spear: { name: '槍', speed: 1, motion: 0.95, reach: 1.6, arc: 0.45, desc: '間合いの長い突きと踏み込み攻撃。完璧な回避直後の攻撃で反撃の突きを放つ。' },
+114:  sling: { name: '投石器', speed: 1, motion: 0.8, reach: 0, arc: 1, desc: '石を投げて遠距離攻撃（石1個消費）。強攻撃を長押しして溜め撃ち。' },
+122:  club: { id: 'club', name: '節付き棍棒', slot: 'weapon', tier: 0, attack: 12, cls: 'club', desc: '硬木の節を活かした頼れる棍棒。' },
+123:  flintMaul: { id: 'flintMaul', name: '火打ち石の大槌', slot: 'weapon', tier: 1, attack: 19, cls: 'maul', desc: '重い柄に火打ち石の頭を固定した大槌。' },
+124:  amberHammer: { id: 'amberHammer', name: '琥珀牙のハンマー', slot: 'weapon', tier: 2, attack: 29, cls: 'maul', desc: '牙の間に輝く琥珀を据えたハンマー。' },
+125:  obsidianClub: { id: 'obsidianClub', name: '黒曜石の大棍棒', slot: 'weapon', tier: 3, attack: 44, cls: 'club', desc: '角の芯に火山ガラスの棘を備えた大棍棒。' },
+126:  boneSpear: { id: 'boneSpear', name: '骨の槍', slot: 'weapon', tier: 1, attack: 17, cls: 'spear', desc: '火打ち石の穂先を付けた骨の柄。長い間合いから反撃の突きを繰り出す。' },
+127:  stalkerLance: { id: 'stalkerLance', name: 'ストーカーランス', slot: 'weapon', tier: 2, attack: 27, cls: 'spear', desc: '柄にデューンストーカーの爪を固定した槍。' },
+128:  reedSling: { id: 'reedSling', name: '葦の投石器', slot: 'weapon', tier: 1, attack: 12, cls: 'sling', desc: '編んだ葦と毛皮で作られている。18m先まで石を飛ばす。' },
+129:  sinewSling: { id: 'sinewSling', name: 'ストーカーの腱の投石器', slot: 'weapon', tier: 2, attack: 19, cls: 'sling', desc: '骨の握りに腱を張った投石器。威力の高い弾を放つ。' },
+130:  leafWraps: { id: 'leafWraps', name: '葉の装備', slot: 'armor', tier: 0, defense: 0, hp: 0, desc: 'ほとんど葉っぱ。' },
+131:  hideGarb: { id: 'hideGarb', name: '剛毛皮の服', slot: 'armor', tier: 1, defense: 0.15, hp: 15, desc: '毛皮と鱗で作ったチュニック。' },
+132:  stalkerPlate: { id: 'stalkerPlate', name: 'ストーカーの骨鎧', slot: 'armor', tier: 2, defense: 0.27, hp: 30, desc: '縞模様の毛皮に骨板を重ねた鎧。' },
+133:  ashguardMantle: { id: 'ashguardMantle', name: '灰守りのマント', slot: 'armor', tier: 3, defense: 0.38, hp: 45, heatProof: true, desc: '灰毛皮の下にルインホーンの甲板を備える。火口の熱を防ぐ。' },
+134:  boneKnife: { id: 'boneKnife', name: '骨の解体ナイフ', slot: 'tool', tier: 1, desc: '狩りのたびに追加で素材を切り出せる。' },
+135:  flintHatchet: { id: 'flintHatchet', name: '火打ち石の手斧', slot: 'tool', tier: 1, attack: 9, desc: '数回の攻撃で木を倒せる。2キーで装備。' },
+136:  flintPick: { id: 'flintPick', name: '火打ち石のつるはし', slot: 'tool', tier: 1, attack: 10, desc: '岩を素早く砕き、琥珀石や黒曜石を採掘できる。3キーで装備。' },
+152:  tree: { kind: 'tree', name: '木', hp: 6, yields: ['wood', 3, 5] },
+153:  rock: { kind: 'rock', name: '大岩', hp: 7, yields: ['stone', 2, 4], bonus: ['flint', 0.6] },
+191:  { stage: 1, name: '焚き火の野営地', desc: '焚き火に火を戻し、簡易小屋を建てる。基本のクラフトと休息が解放される。', cost: { wood: 6, stone: 5, fiber: 4 } },
+192:  { stage: 2, name: '柵の野営地', desc: '柵を立て、毛皮のテントと作業台を設置する。ティアII装備が解放される。', cost: { wood: 12, stone: 8, bone: 6, roughHide: 3, snapperScale: 2 } },
+193:  { stage: 3, name: '石の砦', desc: '石窯を作り、塔の基礎を壁で囲む。ティアIII装備と塔が解放される。', cost: { stone: 12, amber: 6, stalkerClaw: 3, ruinPlate: 2 } },
+246:  weak: { zone: HitZone; mult: number; label: string }
+261:export const SPECIES: Record<SpeciesId, SpeciesDef> = {
+263:    id: 'tuskhog', name: 'タスクホッグ', title: '剛毛を逆立てたジャングルイノシシ', region: 'coast', boss: false,
+264:    weak: { zone: 'flank', mult: 1.35, label: '側面' }, print: 'hoof',
+265:    habitat: 'Roots through the palm groves and forest edge of the jungle coast. Hunted by デューンストーカーs and ambushed by マッドスナッパーs at the shore.',
+268:    lore: 'Territorial and short-sighted. Paws the ground before it charges — sidestep, then punish its skid.',
+270:      atk({ id: 'gore', name: '牙の振り上げ', desc: '正面に牙を素早く振り上げる。', anim: 'gore', range: [0, 3.2], windup: 0.55, active: 0.18, recovery: 0.75, damage: 14, knock: 'flinch', shape: { kind: 'cone', radius: 3.2, angle: 80 }, weight: 3, cooldown: 0.4, tracking: 0.6 }),
+271:      atk({ id: 'charge', name: '剛毛突進', desc: '頭を下げ、一直線に突進する。', anim: 'charge', range: [5, 14], windup: 0.9, active: 0.9, recovery: 1.2, damage: 20, knock: 'down', shape: { kind: 'lane', length: 14, width: 2.6 }, weight: 2, cooldown: 3, tracking: 0.7 }),
+276:    id: 'mudsnapper', name: 'マッドスナッパー', title: '水辺に潜む待ち伏せトカゲ', region: 'coast', boss: false,
+277:    weak: { zone: 'head', mult: 1.3, label: '頭' }, prey: ['tuskhog'], print: 'webbed',
+278:    habitat: 'Lies half-buried in the wet sand of the tideline. Ambushes タスクホッグs that stray to the water.',
+281:    lore: 'Lurks at the tideline. Its lunge is fast but it cannot turn mid-bite; its tail punishes flankers.',
+283:      atk({ id: 'lunge', name: '噛みつき突進', desc: '顎を開いて素早く飛びかかる。', anim: 'bite', range: [2, 6.5], windup: 0.5, active: 0.28, recovery: 0.85, damage: 13, knock: 'flinch', shape: { kind: 'lane', length: 6.5, width: 1.9 }, weight: 3, cooldown: 0.8, tracking: 0.65 }),
+284:      atk({ id: 'tail', name: '尻尾払い', desc: '後方へ尻尾を振り回す。', anim: 'tail', range: [0, 3.6], windup: 0.45, active: 0.16, recovery: 0.6, damage: 10, knock: 'flinch', shape: { kind: 'cone', radius: 3.6, angle: 130, back: true }, weight: 4, cooldown: 1, tracking: 0, behind: true }),
+289:    id: 'dunestalker', name: 'デューンストーカー', title: '群れで狩る砂漠のラプトル', region: 'highlands', boss: false,
+290:    weak: { zone: 'rear', mult: 1.3, label: '尻尾' }, prey: ['tuskhog'], print: 'talon',
+291:    habitat: 'Roams the amber grass of the highlands in small packs. Preys on タスクホッグs; flees from アッシュファングs.',
+294:    lore: 'Hunts in pairs and threes. Crouches before pouncing — roll through the landing, not away from it.',
+296:      atk({ id: 'pounce', name: '飛びかかり', desc: '身を低くした後、プレイヤーの位置へ飛びかかる。', anim: 'pounce', range: [5, 12], windup: 0.75, active: 0.6, recovery: 0.95, damage: 18, knock: 'down', shape: { kind: 'leap', radius: 2.7, range: 12 }, weight: 3, cooldown: 2.5, tracking: 0.7 }),
+297:      atk({ id: 'rake', name: '爪の一閃', desc: '前脚の爪で大きく切り裂く。', anim: 'claw', range: [0, 3.2], windup: 0.4, active: 0.14, recovery: 0.55, damage: 12, knock: 'flinch', shape: { kind: 'cone', radius: 3.2, angle: 100 }, weight: 3, cooldown: 0.5, tracking: 0.6 }),
+302:    id: 'emberbeetle', name: 'エンバービートル', title: 'マグマを吐く装甲甲虫', region: 'caldera', boss: false,
+303:    weak: { zone: 'rear', mult: 1.45, label: '柔らかい腹部' }, print: 'insect',
+304:    habitat: 'Crawls over warm obsidian near lava vents in the caldera, grazing on sulfur crust.',
+307:    lore: 'Its shell glows before it spits. Close the gap — it rolls when cornered, and the roll leaves it belly-up.',
+309:      atk({ id: 'spit', name: 'マグマ吐き', desc: 'プレイヤーの位置へマグマの塊を吐きつける。', anim: 'spit', range: [5, 18], windup: 0.8, active: 0.3, recovery: 0.9, damage: 16, knock: 'flinch', shape: { kind: 'spit', radius: 2.4, count: 1, spread: 0, speed: 15 }, weight: 3, cooldown: 1.6, tracking: 0.8 }),
+310:      atk({ id: 'roll', name: '火の粉転がり', desc: '丸まり、一直線に転がる。', anim: 'roll', range: [2, 10], windup: 1.0, active: 1.0, recovery: 1.4, damage: 22, knock: 'down', shape: { kind: 'lane', length: 12, width: 2.9 }, weight: 2, cooldown: 3, tracking: 0.6 }),
+315:    id: 'ashfang', name: 'アッシュファング', title: '灰のたてがみを持つ猟犬', region: 'caldera', boss: false,
+316:    weak: { zone: 'flank', mult: 1.3, label: '側面' }, prey: ['dunestalker'], print: 'paw',
+317:    habitat: 'Hunts the ash slopes where the highlands meet the caldera. Chases デューンストーカーs down from the plateau.',
+320:    lore: 'Its mane flares before a burning dash. Dodge sideways and strike its flank while it skids.',
+322:      atk({ id: 'dash', name: '炎の突進', desc: '炎をまとって駆け抜ける。', anim: 'charge', range: [4, 12], windup: 0.7, active: 0.55, recovery: 1.05, damage: 18, knock: 'down', shape: { kind: 'lane', length: 13, width: 2.3 }, weight: 3, cooldown: 2.2, tracking: 0.7 }),
+323:      atk({ id: 'bite', name: '灼熱の噛みつき', desc: '正面に噛みつく。', anim: 'bite', range: [0, 3], windup: 0.42, active: 0.15, recovery: 0.55, damage: 13, knock: 'flinch', shape: { kind: 'cone', radius: 3, angle: 70 }, weight: 3, cooldown: 0.4, tracking: 0.6 }),
+328:    id: 'ruinhorn', name: 'ルインホーン', title: '沈んだ遺跡の暴君', region: 'highlands', boss: true,
+329:    weak: { zone: 'rear', mult: 1.25, label: '後脚' }, print: 'giant',
+330:    habitat: 'Guards the Sunken Ruins east of the highland ramp. Its three-toed prints crack the flagstones.',
+333:    lore: 'A stone-hided behemoth that guards the ruins. Every charge ends in a long skid; its quake punishes greed.',
+335:      atk({ id: 'sweep', name: '角の薙ぎ払い', desc: '巨大な角を大きく振り払う。', anim: 'gore', range: [0, 7], windup: 0.8, active: 0.22, recovery: 0.95, damage: 24, knock: 'down', shape: { kind: 'cone', radius: 7.2, angle: 140 }, weight: 3, cooldown: 0.8, tracking: 0.55 }),
+336:      atk({ id: 'rampage', name: '猛進突撃', desc: '長い距離を轟音とともに突進し、滑りながら停止する。', anim: 'charge', range: [8, 30], windup: 1.1, active: 1.5, recovery: 1.9, damage: 32, knock: 'down', shape: { kind: 'lane', length: 30, width: 5.2 }, weight: 3, cooldown: 4, tracking: 0.75 }),
+337:      atk({ id: 'quake', name: '地震踏み', desc: '立ち上がって周囲の地面を揺らす。', anim: 'stomp', range: [0, 7.5], windup: 1.25, active: 0.2, recovery: 1.15, damage: 26, knock: 'down', shape: { kind: 'circle', radius: 8.6, forward: 0 }, weight: 2, cooldown: 5, tracking: 0 }),
+338:      atk({ id: 'kick', name: '後ろ蹴り', desc: '後ろにいる相手を蹴り飛ばす。', anim: 'kick', range: [0, 6], windup: 0.5, active: 0.15, recovery: 0.75, damage: 18, knock: 'flinch', shape: { kind: 'cone', radius: 5.8, angle: 110, back: true }, weight: 5, cooldown: 1.5, tracking: 0, behind: true }),
+339:      atk({ id: 'boulders', name: '瓦礫投げ', desc: '怒り状態で遺跡の瓦礫を投げつける。', anim: 'toss', range: [9, 30], windup: 1.1, active: 0.3, recovery: 1.0, damage: 22, knock: 'down', shape: { kind: 'spit', radius: 3.4, count: 3, spread: 6, speed: 20 }, weight: 3, cooldown: 5, tracking: 0.8, enragedOnly: true }),
+345:    id: 'vulkarr', name: 'ヴァルカー', title: '燃え盛る火口の大蛇', region: 'caldera', boss: true,
+346:    weak: { zone: 'head', mult: 1.25, label: '光る喉' }, print: 'wyrm',
+347:    habitat: 'Nests in the heart of the Cinder Caldera, beyond the Breach canyon. The ground is scorched where it walks.',
+350:    lore: 'The heart of the mountain. Its throat glows before the breath; eruptions are marked — keep moving.',
+352:      atk({ id: 'breath', name: '火炎ブレス', desc: '正面に長い炎を吐く。', anim: 'breath', range: [4, 15], windup: 1.0, active: 1.1, recovery: 1.25, damage: 28, knock: 'down', shape: { kind: 'cone', radius: 15, angle: 48 }, weight: 3, cooldown: 3, tracking: 0.7 }),
+353:      atk({ id: 'spin', name: '尻尾の旋風', desc: '尻尾を伸ばして回転する。', anim: 'spin', range: [0, 7], windup: 0.75, active: 0.4, recovery: 1.05, damage: 24, knock: 'down', shape: { kind: 'circle', radius: 7.8, forward: 0 }, weight: 3, cooldown: 2, tracking: 0 }),
+354:      atk({ id: 'erupt', name: 'マグマ噴出', desc: '咆哮とともに足元の地面を裂く。', anim: 'erupt', range: [0, 30], windup: 1.4, active: 0.3, recovery: 0.85, damage: 26, knock: 'down', shape: { kind: 'burst', radius: 3.4, count: 6, scatter: 9 }, weight: 2, cooldown: 6, tracking: 0.35 }),
+355:      atk({ id: 'leap', name: '火口落とし', desc: '飛び上がり、プレイヤーの位置へ叩きつける。', anim: 'slam', range: [9, 22], windup: 0.9, active: 0.9, recovery: 1.6, damage: 34, knock: 'down', shape: { kind: 'leap', radius: 6.6, range: 22 }, weight: 2, cooldown: 5, tracking: 0.7 }),
+356:      atk({ id: 'fireballs', name: '火の粉連射', desc: '怒り状態で火球を3発吐く。', anim: 'spit', range: [8, 26], windup: 0.9, active: 0.3, recovery: 0.75, damage: 20, knock: 'down', shape: { kind: 'spit', radius: 3, count: 3, spread: 5, speed: 22 }, weight: 3, cooldown: 4, tracking: 0.8, enragedOnly: true }),
+363:export const SPECIES_ORDER: SpeciesId[] = ['tuskhog', 'mudsnapper', 'dunestalker', 'emberbeetle', 'ashfang', 'ruinhorn', 'vulkarr']
+395:  fiber: { kind: 'fiber', name: '葦草', verb: '刈る', yields: [['fiber', 2, 3]] },
+396:  bone: { kind: 'bone', name: '骨の山', verb: '拾う', yields: [['bone', 2, 2]] },
+397:  herb: { kind: 'herb', name: '癒やし草', verb: '採取', yields: [['herb', 2, 2]] },
+398:  amber: { kind: 'amber', name: '琥珀石の鉱脈', verb: '採掘', yields: [['amber', 1, 2]], needsPick: true },
+399:  obsidian: { kind: 'obsidian', name: '黒曜石の欠片', verb: '採掘', yields: [['obsidian', 1, 2]], needsPick: true },
+400:  sulfur: { kind: 'sulfur', name: '硫黄の結晶', verb: '砕く', yields: [['sulfur', 1, 2]] },
+401:  glowcap: { kind: 'glowcap', name: '光るキノコの群生', verb: '採取', yields: [['glowcap', 1, 2]] },
+-- Creature events --
+[0m[32m20[0m:export [0m[1m[31mtype CreatureEvent[0m =
+[32mubuntu@sandbox:~/savageclash$ [0m

@@ -1,0 +1,26 @@
+# Terminal Full Output
+# Terminal: default-1
+# Command: stat -c '%y %n %s' shots/01-title.png shots/02-controls.png 2>/dev/null || true; ps -eo pid,ppid,etime,%cpu,%mem,stat,args --sort=-%cpu | head -12
+# PID: 1153
+# Timestamp: 2026-10-24_10-35-47.285582
+# Original Length: 3752 characters
+# ----------------------------------------
+
+[32mubuntu@sandbox:~/savageclash$ [0mstat -c '%y %n %s' shots/01-title.png shots/02-controls.png 2>/dev/null || true; ps -eo pid,ppid,etime,%cpu,%mem,stat,args --sort=-%cpu | head -12
+2026-10-24 10:34:24.386670207 +0000 shots/01-title.png 980185
+2026-10-24 10:35:06.830115099 +0000 shots/02-controls.png 798548
+    PID    PPID     ELAPSED %CPU %MEM STAT COMMAND
+   1153    1150    01:25:39  3.4  0.2 S<l  /usr/local/bin/sandbox-runtime
+   2841    2827    01:21:19  1.9  2.0 S<l  /home/ubuntu/.nvm/versions/node/v22.13.0/bin/node /home/ubuntu/savageclash/node_modules/typescript/lib/tsserver.js --useInferredProjectPerProjectRoot --cancellationPipeName /tmp/f02c4b40085716461333086a96ef4ad0/tscancellation* --locale en --validateDefaultNpmLocation --useNodeIpc
+   2816    2804    01:21:20  1.8  2.1 S<l  /home/ubuntu/.nvm/versions/node/v22.13.0/bin/node /home/ubuntu/savageclash/node_modules/typescript/lib/tsserver.js --useInferredProjectPerProjectRoot --cancellationPipeName /tmp/fcf0410d42ea91ffd2c01e004f3a8fa6/tscancellation* --locale en --validateDefaultNpmLocation --useNodeIpc
+   1014       1    01:25:40  0.8  0.3 S<Lsl /usr/bin/envd -cmd /e2b-startup.sh
+    170       2    01:25:41  0.2  0.0 I    [kworker/2:1-events]
+   1274    1157    01:25:37  0.1  0.3 S<l  /usr/lib/chromium/chromium --show-component-extension-options --enable-gpu-rasterization --no-default-browser-check --disable-pings --media-router=0 --disable-dev-shm-usage --enable-remote-extensions --load-extension --disable-features=HighEfficiencyModeAvailable,HighEfficiencyModeToggle,DestroyProfileOnBrowserClose,Translate,PaintHolding,AcceptCHFrame --disable-permission-action-reporting --disable-field-trial-config --disable-background-networking --d
+isable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-breakpad --no-default-browser-check --disable-dev-shm-usage --disable-hang-monitor --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointe
+rTypes=4 --use-angle=swiftshader-webgl --ozone-override-screen-size=1280,1029 --noerrdialogs --window-size=1280,1029 --window-position=0,0 --lang=en-US --num-raster-threads=4 --remote-debugging-port=9222 --load-extension=/opt/.manus/.packages/chrome-extensions/ublock-lite --user-data-dir=/home/ubuntu/.browser_data_dir --download-default-directory=/home/ubuntu/Downloads
+   2840    2827    01:21:19  0.1  0.5 S<l  /home/ubuntu/.nvm/versions/node/v22.13.0/bin/node /home/ubuntu/savageclash/node_modules/typescript/lib/tsserver.js --serverMode partialSemantic --useInferredProjectPerProjectRoot --disableAutomaticTypingAcquisition --cancellationPipeName /tmp/21fa2ad4aff8b6ce83bf77bd7b9276c1/tscancellation* --locale en --validateDefaultNpmLocation --useNodeIpc
+   2815    2804    01:21:20  0.1  0.5 S<l  /home/ubuntu/.nvm/versions/node/v22.13.0/bin/node /home/ubuntu/savageclash/node_modules/typescript/lib/tsserver.js --serverMode partialSemantic --useInferredProjectPerProjectRoot --disableAutomaticTypingAcquisition --cancellationPipeName /tmp/9dd8f9d04e93cce15e486f9725a8300c/tscancellation* --locale en --validateDefaultNpmLocation --useNodeIpc
+   1155    1150    01:25:39  0.0  0.0 S<l  /usr/local/bin/runtime-upgrade
+   1150       1    01:25:40  0.0  0.0 S<s  /usr/bin/python3 /usr/bin/supervisord
+   1897    1153    01:24:56  0.0  0.3 S<l  /home/ubuntu/.nvm/versions/node/v22.13.0/bin/node /home/ubuntu/.manus-addons/manus-webdev-sha-2f045f9552f963be/runtime/mcp/server.mjs
+[32mubuntu@sandbox:~/savageclash$ [0m

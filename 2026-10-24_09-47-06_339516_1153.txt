@@ -1,0 +1,171 @@
+# Terminal Full Output
+# Terminal: default-1
+# Command: python3 - <<'PY'
+from pathlib import Path
+import re
+s=Path('src/game/data.ts').read_text()
+for field in ['anim','tracking','knock','zone','print']:
+ vals=sorted(set(re.findall(rf"\b{field}:\s*(['\"])(.*?)\1",s)))
+ print(field, sorted(v for q,v in vals))
+shapes=re.findall(r"shape:\s*\{\s*kind:\s*['\"]([\w-]+)['\"]([^}]*)",s)
+keys=set()
+for kind,rest in shapes:
+ for key in re.findall(r"(?:^|,)\s*([A-Za-z_][A-Za-z0-9_]*):",rest): keys.add(key)
+print('shape kinds',sorted({k for k,_ in shapes}))
+print('shape keys',sorted(keys))
+PY
+rg -n "<h[1-6]>|<button|<label|title=|aria-label=|textContent\s*=|toast\(|log\(|setBootProgress\(" src/ui/ui.ts src/main.ts src/game | head -200
+# PID: 1153
+# Timestamp: 2026-10-24_09-47-06.339516
+# Original Length: 17257 characters
+# ----------------------------------------
+
+[32mubuntu@sandbox:~/savageclash$ [0mpython3 - <<'PY'
+from pathlib import Path
+import re
+s=Path('src/game/data.ts').read_text()
+for field in ['anim','tracking','knock','zone','print']:
+ vals=sorted(set(re.findall(rf"\b{field}:\s*(['\"])(.*?)\1",s)))
+ print(field, sorted(v for q,v in vals))
+shapes=re.findall(r"shape:\s*\{\s*kind:\s*['\"]([\w-]+)['\"]([^}]*)",s)
+keys=set()
+for kind,rest in shapes:
+ for key in re.findall(r"(?:^|,)\s*([A-Za-z_][A-Za-z0-9_]*):",rest): keys.add(key)
+print('shape kinds',sorted({k for k,_ in shapes}))
+print('shape keys',sorted(keys))
+PY
+rg -n "<h[1-6]>|<button|<label|title=|aria-label=|textContent\s*=|toast\(|log\(|setBootProgress\(" src/ui/ui.ts src/main.ts src/game | head -200
+anim ['bite', 'breath', 'charge', 'claw', 'erupt', 'gore', 'kick', 'pounce', 'roll', 'slam', 'spin', 'spit', 'stomp', 'tail', 'toss']
+tracking []
+knock ['down', 'flinch']
+zone ['flank', 'head', 'rear']
+print ['giant', 'hoof', 'insect', 'paw', 'talon', 'webbed', 'wyrm']
+shape kinds ['burst', 'circle', 'cone', 'lane', 'leap', 'spit']
+shape keys ['angle', 'back', 'count', 'forward', 'length', 'radius', 'range', 'scatter', 'speed', 'spread', 'width']
+src/main.ts:87:  ui.setBootProgress(0.05, '島が目覚めています…')
+src/main.ts:104:    ui.setBootProgress(0.08 + f * 0.92, labels[Math.min(labels.length - 1, Math.floor(f * labels.length))])
+src/main.ts:174:        ui.toast(`動作を滑らかにするため画質を${next === 'medium' ? '中' : '低'}に変更しました（設定から変更できます）`, 'info')
+src/ui/ui.ts:142:      <button class="btn primary" data-act="continue" data-el="btnContinue">探索を続ける</button>
+src/ui/ui.ts:143:      <button class="btn" data-act="new" data-el="btnNew">新たな探索</button>
+src/ui/ui.ts:146:        <button class="btn ghost" data-act="help">操作方法</button>
+src/ui/ui.ts:147:        <button class="btn ghost" data-act="settings">設定</button>
+src/ui/ui.ts:154:      <h3>最初から始めますか？</h3>
+src/ui/ui.ts:156:      <div class="row2"><button class="btn primary" data-act="confirm-new">新しく始める</button><button class="btn ghost" data-act="cancel-new">戻る</button></div>
+src/ui/ui.ts:171:      <div class="chip slot" data-el="potChip" title="癒やし草の薬（R）"><img class="pi" src="./ui/icons/poultice.webp" width="26" height="26" alt=""><b data-el="potN">0</b><kbd>R</kbd></div>
+src/ui/ui.ts:172:      <div class="chip meal" data-el="mealChip" hidden title="食事効果"><i class="mring" data-el="mealRing"></i><img data-el="mealImg" src="./ui/icons/heartyHaunch.webp" width="28" height="28" alt=""><b data-el="mealT"></b><small data-el="mealName"></small></div>
+src/ui/ui.ts:201:  <div class="gadget" data-el="gadget" title="道具（Gで使用、Cで切替）"><img data-el="gadgetImg" src="./ui/icons/snare.webp" width="40" height="40" alt="" draggable="false"><b data-el="gadgetN">0</b><kbd>G</kbd><small data-el="gadgetName"></small><em><kbd>C</kbd> 切替</em></div>
+src/ui/ui.ts:215:      <button data-tab="materials">素材</button>
+src/ui/ui.ts:216:      <button data-tab="craft">作成</button>
+src/ui/ui.ts:217:      <button data-tab="cook">料理</button>
+src/ui/ui.ts:218:      <button data-tab="camp">キャンプ</button>
+src/ui/ui.ts:219:      <button data-tab="gear">装備</button>
+src/ui/ui.ts:220:      <button data-tab="journal">狩猟日誌</button>
+src/ui/ui.ts:223:      <button class="x" data-act="close-menu" aria-label="閉じる">✕</button>
+src/ui/ui.ts:232:    <h2>一時停止中</h2>
+src/ui/ui.ts:234:      <button class="btn primary" data-act="resume">再開</button>
+src/ui/ui.ts:235:      <button class="btn" data-act="help">操作方法</button>
+src/ui/ui.ts:236:      <button class="btn" data-act="settings">設定</button>
+src/ui/ui.ts:237:      <button class="btn ghost" data-act="quit">セーブしてタイトルへ</button>
+src/ui/ui.ts:243:  <h2>力尽きた…</h2>
+src/ui/ui.ts:250:    <h2>狼煙が上がった</h2>
+src/ui/ui.ts:254:      <button class="btn primary" data-act="keep">探索を続ける</button>
+src/ui/ui.ts:255:      <button class="btn" data-act="new-after">新たな探索</button>
+src/ui/ui.ts:256:      <button class="btn ghost" data-act="quit">タイトルへ戻る</button>
+src/ui/ui.ts:263:    <header><h3>操作方法</h3><button class="x" data-act="help" aria-label="閉じる">✕</button></header>
+src/ui/ui.ts:266:      <div class="help-tips"><h4>Hunting</h4><ul>${TIPS.map(t => `<li>${t}</li>`).join('')}</ul></div>
+src/ui/ui.ts:273:    <header><h3>シンダーフォール島</h3><button class="x" data-act="map" aria-label="閉じる">✕</button></header>
+src/ui/ui.ts:281:    <header><h3>設定</h3><button class="x" data-act="settings-close" aria-label="閉じる">✕</button></header>
+src/ui/ui.ts:282:    <label>音楽 <input type="range" min="0" max="1" step="0.05" data-set="musicVolume"></label>
+src/ui/ui.ts:283:    <label>効果音 <input type="range" min="0" max="1" step="0.05" data-set="sfxVolume"></label>
+src/ui/ui.ts:284:    <label>マウス感度 <input type="range" min="0.3" max="2.5" step="0.05" data-set="sensitivity"></label>
+src/ui/ui.ts:285:    <label class="check"><input type="checkbox" data-set="invertY"> Y軸を反転</label>
+src/ui/ui.ts:286:    <label class="check"><input type="checkbox" data-set="reducedMotion"> 画面の揺れを軽減</label>
+src/ui/ui.ts:287:    <label class="check"><input type="checkbox" data-set="muted"> すべての音を消す</label>
+src/ui/ui.ts:288:    <label>画質
+src/ui/ui.ts:311:  setBootProgress(f: number, text?: string): void {
+src/ui/ui.ts:313:    if (text) this.el.bootText.textContent = text
+src/ui/ui.ts:397:          this.toast(r.ok ? r.message : r.reason, r.ok ? 'good' : 'warn')
+src/ui/ui.ts:430:          else this.toast(r.reason, 'warn')
+src/ui/ui.ts:439:            this.toast(r.reason, 'warn')
+src/ui/ui.ts:525:        return `<span class="cost ${have >= need ? 'ok' : 'no'}" title="${esc(it.name)}">${itemIcon(id, 24)}<b>${Math.min(have, 99)}/${need}</b><small>${esc(it.name)}</small></span>`
+src/ui/ui.ts:547:        .map(([name, list]) => `<h4>${name}</h4>${list.length ? `<div class="items">${list.map(id => `<div class="item k-${ITEMS[id].kind}" title="${esc(ITEMS[id].desc)}">${itemIcon(id, 44)}<b>${count(p, id)}</b><span>${esc(ITEMS[id].name)}</span><small>${esc(ITEMS[id].desc)}</small></div>`).join('')}</div>` : '<p class="muted">まだ何もありません。</p>'}`)
+src/ui/ui.ts:550:      html += `<h4>狩猟記録</h4>${hunts.length ? `<div class="hunts">${hunts.map(([s, n]) => `<span><b>${n}×</b> ${esc(SPECIES[s].name)}</span>`).join('')}</div>` : '<p class="muted">狩猟記録はありません。</p>'}`
+src/ui/ui.ts:570:          <button class="btn sm ${can ? 'primary' : ''}" data-act="craft" data-id="${r.id}" ${can ? '' : 'disabled'}>${label}</button></div>`
+src/ui/ui.ts:578:        html += `<div class="card"><h4>次の段階：${esc(next.name)} <small>（${ROMAN[next.stage]} / III）</small></h4><p>${esc(next.desc)}</p>${this.costChips(next.cost)}
+src/ui/ui.ts:579:          <button class="btn ${ok && atCamp ? 'primary' : ''}" data-act="upgrade" ${ok && atCamp ? '' : 'disabled'}>${atCamp ? (ok ? 'Build' : '素材不足') : 'キャンプに戻って建設'}</button></div>`
+src/ui/ui.ts:580:      } else html += `<div class="card"><h4>ストーンホールド完成</h4><p>キャンプが完成しました。</p></div>`
+src/ui/ui.ts:582:      html += `<div class="card tower"><h4>狼煙の塔</h4><p>${ts === 'done' ? '狼煙が上がりました。救助が向かっています。' : ts === 'locked' ? '建設にはストーンホールド（キャンプ段階III）が必要です。' : '頂点捕食者の戦利品と燃料を集め、狼煙の塔を建てて火を灯そう。探索はここで完了します。'}</p>
+src/ui/ui.ts:584:        ${ts === 'ready' || ts === 'missing' ? `<button class="btn ${ts === 'ready' && atCamp ? 'primary glow' : ''}" data-act="tower" ${ts === 'ready' && atCamp ? '' : 'disabled'}>${ts === 'ready' ? 'Restore the 狼煙の塔' : '素材不足'}</button>` : ''}</div>`
+src/ui/ui.ts:595:        html += `<h4>${slot === 'weapon' ? '武器' : slot === 'armor' ? '防具' : '道具'}</h4><div class="gear-list">${list
+src/ui/ui.ts:601:            return `<div class="gearcard ${own ? '' : 'missing'} ${on ? 'on' : ''}">${gi}<b>${esc(gd.name)}</b>${wc}<small>${own ? esc(gd.desc) : '未作成'}</small>${own && slot !== 'tool' ? `<button class="btn sm" data-act="equip" data-id="${gd.id}" ${on ? 'disabled' : ''}>${on ? '装備中' : '装備する'}</button>` : own ? `<em class="okc">${gd.id === 'flintHatchet' ? '<kbd>2</kbd>で手に持つ' : gd.id === 'flintPick' ? '<kbd>3</kbd>で手に持つ · 鉱脈を採掘' : '常時有効'}</em>` : ''}</div>`
+src/ui/ui.ts:616:      html += `<div class="card meal-now"><img class="pi" src="./ui/icons/${m.id}.webp" width="56" height="56" alt=""><div><h4>食事済み：${esc(m.name)} <small class="q-${p.meal.q}">${p.meal.q === 'perfect' ? '絶妙な焼き加減' : p.meal.q === 'charred' ? '焦げた' : 'よく焼けた'}</small></h4><p>${esc(m.desc)} · <b>${fmtTime(p.meal.t)}</b> 残り。再調理すると効果が上書きされます。</p></div></div>`
+src/ui/ui.ts:622:      html += `<div class="sear ${this.sear.done ? 'done' : ''}" data-el-sear><h4>調理中：${esc(m.name)}…</h4>
+src/ui/ui.ts:625:        ${this.sear.done ? '' : '<button class="btn primary" data-act="sear-stop">火から下ろす</button>'}</div>`
+src/ui/ui.ts:633:        <button class="btn sm ${can ? 'primary' : ''}" data-act="cook" data-id="${id}" ${can ? '' : 'disabled'}>${label}</button></div>`
+src/ui/ui.ts:665:      this.toast(r.message, 'good')
+src/ui/ui.ts:675:        this.toast(`焦げた! ${r.message} (shorter buff)`, 'warn')
+src/ui/ui.ts:684:    } else this.toast(r.reason, 'warn')
+src/ui/ui.ts:698:      return `<button class="jcard ${sp === this.journalSel ? 'on' : ''} ${k.seen ? '' : 'unknown'} ${d.boss ? 'boss' : ''}" data-act="jsel" data-id="${sp}">
+src/ui/ui.ts:700:        <span class="jbadges">${k.tracked ? '<i class="jb trk" title="追跡中"></i>' : ''}${k.weak ? '<i class="jb wk" title="弱点判明"></i>' : ''}${k.hunted ? `<i class="jb hn">${k.hunts}</i>` : ''}</span></button>`
+src/ui/ui.ts:707:      page = `<div class="jpage unknown"><h3>未知の獣</h3><p>${esc(REGION_NAMES[d.region])}に生息すると噂されています。姿を見つけると記録が始まります。</p></div>`
+src/ui/ui.ts:728:      page = `<div class="jpage"><header><h3>${esc(d.name)}</h3><small>${esc(d.title)}</small>${k.tracked ? '<em class="tag trk">追跡中</em>' : ''}</header>
+src/ui/ui.ts:730:        <div class="jgrid"><div><h5>弱点</h5>${diagram}<p>${k.weak ? `<b>${esc(d.weak.label)}</b>に与えるダメージ ×${d.weak.mult}` : '<span class="muted">攻撃して弱点を見つけよう</span>'}</p></div>
+src/ui/ui.ts:731:        <div><h5>追跡</h5><div class="pips">${pips}</div><p>${k.clues}/${TRACKING.cluesNeeded}個の手がかり${k.tracked ? ' · 追跡中' : ''}</p><h5>記録</h5><p>討伐数 <b>${k.hunts}</b>${k.best ? ` · 最速 <b>${fmtTime(k.best)}</b>` : ''}</p></div></div>
+src/ui/ui.ts:732:        <h5>生態</h5>${eco}<h5>攻撃</h5>${atks}<h5>剥ぎ取り</h5>${drops}</div>`
+src/ui/ui.ts:742:      toast: (text, kind) => this.toast(text, kind),
+src/ui/ui.ts:766:    el.textContent = text
+src/ui/ui.ts:787:    el.textContent = text
+src/ui/ui.ts:805:    this.el.jnoteText.textContent = text
+src/ui/ui.ts:818:  toast(text: string, kind: 'good' | 'warn' | 'info' = 'info'): void {
+src/ui/ui.ts:820:    t.textContent = text
+src/ui/ui.ts:831:      existing.el.querySelector('b')!.textContent = `+${existing.n}`
+src/ui/ui.ts:847:    this.el.bannerKind.textContent = kind === 'boss' ? '頂点捕食者' : kind === 'camp' ? 'キャンプ' : 'エリア到達'
+src/ui/ui.ts:848:    this.el.bannerTitle.textContent = title
+src/ui/ui.ts:849:    this.el.bannerSub.textContent = sub
+src/ui/ui.ts:889:        `<div class="hslot ${p.held === id ? 'on' : ''} ${own ? '' : 'locked'}" data-slot="${id}" title="${esc(name)}"><img src="${img}" alt="" draggable="false" width="44" height="44"><kbd>${n}</kbd><small>${esc(own ? name : 'キャンプで作成')}</small></div>`
+src/ui/ui.ts:918:      E.hbarName.textContent = h.label
+src/ui/ui.ts:920:      E.hbarNote.textContent = h.frac <= 0 ? (h.kind === 'tree' ? '伐採！' : '破壊！') : h.slow ? (h.kind === 'tree' ? '手斧なら効率よく伐採できます' : 'ピッケルなら効率よく採掘できます') : ''
+src/ui/ui.ts:1044:    E.hpText.textContent = `${Math.ceil(P.hp)} / ${P.maxHp}`
+src/ui/ui.ts:1065:    E.potN.textContent = String(g.progress.inv.poultice ?? 0)
+src/ui/ui.ts:1080:      E.bossName.textContent = b.def.name
+src/ui/ui.ts:1081:      E.bossTitle.textContent = b.def.title
+src/ui/ui.ts:1086:      E.bossTag.textContent = tag
+src/ui/ui.ts:1093:      E.tName.textContent = t.def.name
+src/ui/ui.ts:1097:      E.tTag.textContent = tag
+src/ui/ui.ts:1110:      E.objStep.textContent = o.id === 'victory' ? '完了' : `目標 ${o.step} / ${o.total}`
+src/ui/ui.ts:1111:      E.objTitle.textContent = o.title
+src/ui/ui.ts:1112:      E.objDetail.textContent = o.ready ? '準備完了 — キャンプのかまどへ戻ろう' : o.detail
+src/ui/ui.ts:1120:      E.objDist.textContent = `${Math.round(d)} m`
+src/ui/ui.ts:1137:      E.markerDist.textContent = `${Math.round(d)}m`
+src/ui/ui.ts:1140:      E.objDist.textContent = ''
+src/ui/ui.ts:1149:      E.compassDist.textContent = `${Math.round(Math.hypot(op.x - P.pos.x, op.z - P.pos.z))}m`
+src/ui/ui.ts:1152:      E.compassDist.textContent = ''
+src/ui/ui.ts:1167:        E.tmarkerDist.textContent = `${Math.round(td)}m`
+src/ui/ui.ts:1187:        E.promptVerb.textContent = it.verb
+src/ui/ui.ts:1188:        E.promptLabel.textContent = it.label
+src/ui/ui.ts:1195:    E.region.textContent = REGION_NAMES[g.region]
+src/ui/ui.ts:1209:    E.gadgetN.textContent = String(n)
+src/ui/ui.ts:1210:    E.gadgetName.textContent = ITEMS[gd].name
+src/ui/ui.ts:1234:        E.mealName.textContent = MEALS[m.id].name
+src/ui/ui.ts:1241:      E.mealT.textContent = `${Math.floor(m.t / 60)}:${String(Math.floor(m.t % 60)).padStart(2, '0')}`
+src/game/camp.ts:178:  private log(g: THREE.BufferGeometry[], x: number, z: number, len: number, r: number, yaw: number, pitch: number, color = '#8a5a34', yOff = 0): void {
+src/game/camp.ts:196:    for (let i = 0; i < 4; i += 1) this.log(g, C.x + (R() - 0.5) * 1.5, C.z + (R() - 0.5) * 1.5, 1.1, 0.1, R() * 3, 0, '#2a2420')
+src/game/camp.ts:198:    for (let i = 0; i < 6; i += 1) this.log(g, C.x + 7 + (R() - 0.5) * 3, C.z - 5 + (R() - 0.5) * 3, 2.6, 0.08, R() * 3, 0, '#7a5a3a')
+src/game/camp.ts:200:    for (let i = 0; i < 5; i += 1) this.log(g, CAMP.tower.x + (R() - 0.5) * 5, CAMP.tower.z + (R() - 0.5) * 5, 3, 0.15, R() * 3, 0, '#2e2622')
+src/game/camp.ts:237:    for (const a of [0.6, 2.4, 4.2]) this.log(g, C.x + Math.cos(a) * 3.2, C.z + Math.sin(a) * 3.2, 1.8, 0.22, a + Math.PI / 2, 0)
+src/game/game.ts:33:  toast(text: string, kind?: 'good' | 'warn' | 'info'): void
+src/game/game.ts:180:      onError: msg => this.hooks.toast(msg, 'warn'),
+src/game/game.ts:328:          this.hooks.toast(`${gear.name}を使えるようになりました：${key}で装備（1：武器 · 4：素手）。`, 'good')
+src/game/game.ts:439:        this.hooks.toast(`${c.def.name}が激昂した！攻撃が速くなる。`, 'warn')
+src/game/game.ts:460:        if (wasTracked) this.hooks.toast('痕跡を追いきった。新たな手がかりを調べて別の獣を追跡しよう。', 'info')
+src/game/game.ts:504:        this.hooks.toast(`${c.def.name}は${e.kind === 'pit' ? '落とし穴' : e.kind === 'flash' ? '閃光' : 'くくり罠'}をものともしない。学習されたようだ。同じ手はしばらく控えよう。`, 'warn')
+src/game/game.ts:592:      this.hooks.toast(`${name}がありません。キャンプの作業台で作成しましょう（Cで道具を切替）。`, 'warn')
+src/game/game.ts:619:      this.hooks.toast(why, 'warn')
+src/game/game.ts:624:      this.hooks.toast('落とし穴は一度に1つしか掘れません。', 'warn')
+src/game/game.ts:645:    this.hooks.toast(how === 'set' ? `罠の設置が中断されました。${name}は消費されていません。` : `投擲が中断されました。${name}は消費されていません。`, 'warn')
+src/game/game.ts:730:      this.hooks.toast('食事の効果が切れました。炉で次の食事を作りましょう。', 'info')
+src/game/game.ts:841:    this.hooks.toast('キャンプの焚き火のそばで目を覚ました。荷物は無事だ。', 'info')
+src/game/game.ts:888:      this.hooks.toast(`まずキャンプで${HELD_NAMES[h as Exclude<HeldId, 'weapon'>] ?? '道具'}を作成してください。`, 'warn')
+src/game/game.ts:1059:      this.interactFn = blocked ? () => this.hooks.toast('採掘するにはキャンプの作業台で火打石のツルハシを作ってください。', 'warn') : () => this.gather(n)
+src/game/game.ts:1154:    } else this.hooks.toast(`${ITEMS[id].name}はこれ以上持てません`, 'warn')
+[32mubuntu@sandbox:~/savageclash$ [0m

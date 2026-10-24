@@ -1,0 +1,246 @@
+# Terminal Full Output
+# Terminal: default-1
+# Command: python3 - <<'PY'
+from pathlib import Path
+import re
+files=[Path('src/main.ts'),*Path('src/game').glob('*.ts'),*Path('src/ui').glob('*.ts'),Path('src/lab.ts')]
+prose=re.compile(r'\b(?:the|is|are|was|were|you|your|can|cannot|must|should|with|without|from|when|while|before|after|during|again|each|every|attack|health|damage|build|restore|stage|down|found|recorded|press|click|hold|choose|none|ready|unknown|no|not|has|have|will|into|near|now|this|that|up|off|on|in|out|point|carcass|strike|caught|wild|weak|spot|drops|enemy|enemies|predator|predators|hunting|feeding|hunt|h|m|s)\b',re.I)
+for p in files:
+ lines=p.read_text().splitlines()
+ for i,line in enumerate(lines,1):
+  st=line.strip()
+  if st.startswith(('//','/*','*','import ','export type','type ')): continue
+  if '${' in st and re.search(r"['\"][^'\"]*\$\{",st):
+   print('SUSPICIOUS_INTERPOLATION',p,i,st[:260])
+  # Limit scan to strings likely exposed by UI/game callbacks or text-shaped HTML.
+  if re.search(r'(this\.tip|this\.hooks\.(?:popup|toast|banner|stamp|journal)|hooks\.(?:popup|toast|banner|stamp|journal)|textContent|innerHTML|fillText|title:|desc:|lore:|habitat:|name:|\>[^<]*\w)',st,re.I):
+   strings=re.findall(r"(['\"])((?:\\.|(?!\1).)*)\1|`((?:\\.|[^`])*)`",st)
+   for entry in strings:
+    val=entry[1] or entry[2]
+    if val and prose.search(val) and not re.search(r'[ぁ-ゟ゠-ヿ一-龯]',val):
+     print('ENGLISH_COPY',p,i,repr(val[:200]))
+PY
+# PID: 1153
+# Timestamp: 2026-10-24_09-57-40.565413
+# Original Length: 33224 characters
+# ----------------------------------------
+
+[32mubuntu@sandbox:~/savageclash$ [0mpython3 - <<'PY'
+from pathlib import Path
+import re
+files=[Path('src/main.ts'),*Path('src/game').glob('*.ts'),*Path('src/ui').glob('*.ts'),Path('src/lab.ts')]
+prose=re.compile(r'\b(?:the|is|are|was|were|you|your|can|cannot|must|should|with|without|from|when|while|before|after|during|again|each|every|attack|health|damage|build|restore|stage|down|found|recorded|press|click|hold|choose|none|ready|unknown|no|not|has|have|will|into|near|now|this|that|up|off|on|in|out|point|carcass|strike|caught|wild|weak|spot|drops|enemy|enemies|predator|predators|hunting|feeding|hunt|h|m|s)\b',re.I)
+for p in files:
+ lines=p.read_text().splitlines()
+ for i,line in enumerate(lines,1):
+  st=line.strip()
+  if st.startswith(('//','/*','*','import ','export type','type ')): continue
+  if '${' in st and re.search(r"['\"][^'\"]*\$\{",st):
+   print('SUSPICIOUS_INTERPOLATION',p,i,st[:260])
+  # Limit scan to strings likely exposed by UI/game callbacks or text-shaped HTML.
+  if re.search(r'(this\.tip|this\.hooks\.(?:popup|toast|banner|stamp|journal)|hooks\.(?:popup|toast|banner|stamp|journal)|textContent|innerHTML|fillText|title:|desc:|lore:|habitat:|name:|\>[^<]*\w)',st,re.I):
+   strings=re.findall(r"(['\"])((?:\\.|(?!\1).)*)\1|`((?:\\.|[^`])*)`",st)
+   for entry in strings:
+    val=entry[1] or entry[2]
+    if val and prose.search(val) and not re.search(r'[ぁ-ゟ゠-ヿ一-龯]',val):
+     print('ENGLISH_COPY',p,i,repr(val[:200]))
+PY
+SUSPICIOUS_INTERPOLATION src/main.ts 223 document.body.insertAdjacentHTML('beforeend', `<pre style="color:#ffb0a0;position:fixed;inset:auto 0 0 0;padding:12px;background:#000c;white-space:pre-wrap">${String(e?.stack ?? e)}</pre>`)
+SUSPICIOUS_INTERPOLATION src/game/game.ts 488 this.tip('ecology', `<b>${c.def.name}</b>が<b>${e.prey.def.name}</b>を追っています。仕留めるまで待ち、食事中に奇襲しましょう。`)
+ENGLISH_COPY src/game/game.ts 543 'weak'
+SUSPICIOUS_INTERPOLATION src/game/game.ts 645 this.hooks.toast(how === 'set' ? `罠の設置が中断されました。${name}は消費されていません。` : `投擲が中断されました。${name}は消費されていません。`, 'warn')
+ENGLISH_COPY src/game/game.ts 662 '${def.name}: habitat and ecology recorded'
+ENGLISH_COPY src/game/game.ts 866 '${ITEMS[g].name} ×${this.progress.inv[g] ?? 0}'
+SUSPICIOUS_INTERPOLATION src/game/game.ts 923 : `どの武器でも${r.kind === 'tree' ? '木を切れます' : '岩を砕けます'}が、キャンプの作業台で作れる<b>${HELD_NAMES[best]}</b>ならずっと速く作業できます。`)
+ENGLISH_COPY src/game/game.ts 1135 '${c.def.name}: ${ITEMS[id].name} added to drops'
+ENGLISH_COPY src/game/player.ts 513 'Already at full health'
+ENGLISH_COPY src/game/player.ts 513 'No poultices — craft some at camp'
+SUSPICIOUS_INTERPOLATION src/game/rules.ts 103 if (state === 'locked') return { ok: false, reason: `野営地をステージ${r.stage}まで強化してください。` }
+SUSPICIOUS_INTERPOLATION src/game/rules.ts 115 if (g.slot === 'weapon' && !isBlunt(g.id)) return { ok: true, message: `${g.name}を作成しました。サッチェルから装備してください。` }
+SUSPICIOUS_INTERPOLATION src/game/rules.ts 225 if (st === 'locked') return { ok: false, reason: `野営地をステージ${MEALS[id].stage}まで強化してください。` }
+SUSPICIOUS_INTERPOLATION src/game/rules.ts 230 return { ok: true, message: `${q === 'perfect' ? '完璧な焼き加減：' : q === 'charred' ? '焦げた：' : ''}${MEALS[id].name}: ${MEALS[id].desc}` }
+ENGLISH_COPY src/game/rules.ts 374 'none'
+ENGLISH_COPY src/game/data.ts 271 'down'
+ENGLISH_COPY src/game/data.ts 296 'down'
+ENGLISH_COPY src/game/data.ts 310 'down'
+ENGLISH_COPY src/game/data.ts 322 'down'
+ENGLISH_COPY src/game/data.ts 335 'down'
+ENGLISH_COPY src/game/data.ts 336 'down'
+ENGLISH_COPY src/game/data.ts 337 'down'
+ENGLISH_COPY src/game/data.ts 339 'down'
+ENGLISH_COPY src/game/data.ts 352 'down'
+ENGLISH_COPY src/game/data.ts 353 'down'
+ENGLISH_COPY src/game/data.ts 354 'down'
+ENGLISH_COPY src/game/data.ts 355 'down'
+ENGLISH_COPY src/game/data.ts 356 'down'
+SUSPICIOUS_INTERPOLATION src/game/materials.ts 60 .replace('#include <common>', `#include <common>\nuniform float uTime;\nvarying float vGlow;\nvarying vec3 vWorldP;\n${NOISE_GLSL}`)
+SUSPICIOUS_INTERPOLATION src/game/scenery.ts 836 this.placeHarvest('tree', `palm${Math.floor(r() * 3)}`, x, h - 0.2, z, r() * 6, s, s, s, tint(1, 0.25), 0.45 * s)
+SUSPICIOUS_INTERPOLATION src/game/scenery.ts 840 this.placeHarvest('tree', `jungle${Math.floor(r() * 3)}`, x, h - 0.3, z, r() * 6, s, s * (0.9 + r() * 0.3), s, hue(0.3 + (r() - 0.5) * 0.06, 0.25, 0.5 + r() * 0.12).lerp(new THREE.Color(1, 1, 1), 0.55), 0.62 * s)
+SUSPICIOUS_INTERPOLATION src/game/scenery.ts 851 this.placeHarvest('tree', `acacia${Math.floor(r() * 2)}`, x, h - 0.2, z, r() * 6, s, s, s, tint(1, 0.2), 0.4 * s)
+SUSPICIOUS_INTERPOLATION src/game/scenery.ts 914 else this.placeHarvest('tree', `jungle${Math.floor(r() * 3)}`, x, h - 0.3, z, r() * 6, s, s, s, hue(0.3, 0.25, 0.55).lerp(new THREE.Color(1, 1, 1), 0.55), 0.62 * s)
+SUSPICIOUS_INTERPOLATION src/ui/icons.ts 6 log: c => `<rect x="3" y="8" width="18" height="8" rx="4" fill="${c}" stroke="${INK}" stroke-width="1.5"/><ellipse cx="19" cy="12" rx="2.5" ry="4" fill="#e8c28e" stroke="${INK}" stroke-width="1.5"/><path d="M6 10.5h7M7 13.5h8" stroke="${INK}" stroke-width="1" 
+SUSPICIOUS_INTERPOLATION src/ui/icons.ts 7 rock: c => `<path d="M4 17 6 9l5-4 6 2 3 6-2 5H6Z" fill="${c}" stroke="${INK}" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 10l3-2 4 1" stroke="#fff" stroke-width="1" opacity=".5" fill="none"/>`,
+SUSPICIOUS_INTERPOLATION src/ui/icons.ts 8 reed: c => `<path d="M8 21c0-6 1-11 3-17M12 21c0-6 0-10 1-16M16 21c0-5-1-9-3-14" stroke="${c}" stroke-width="2.2" stroke-linecap="round" fill="none"/><path d="M8 21c0-6 1-11 3-17" stroke="${INK}" stroke-width=".8" fill="none" opacity=".5"/><ellipse cx="11" cy=
+SUSPICIOUS_INTERPOLATION src/ui/icons.ts 9 flint: c => `<path d="M12 3 19 10 15 21 7 18 5 9Z" fill="${c}" stroke="${INK}" stroke-width="1.5" stroke-linejoin="round"/><path d="M12 3 11 12 15 21M5 9l6 3 8-2" stroke="#fff" stroke-width="1" opacity=".45" fill="none"/>`,
+SUSPICIOUS_INTERPOLATION src/ui/icons.ts 10 bone: c => `<path d="M7 5a2.5 2.5 0 0 0-2 4l10 10a2.5 2.5 0 1 0 4-2 2.5 2.5 0 1 0-2-4L7 3a2.5 2.5 0 1 0-2 4 2.5 2.5 0 0 0 2-2Z" fill="${c}" stroke="${INK}" stroke-width="1.4" stroke-linejoin="round"/>`,
+SUSPICIOUS_INTERPOLATION src/ui/icons.ts 11 herb: c => `<path d="M12 21V11" stroke="#4f8a34" stroke-width="2"/><path d="M12 12C6 12 4 7 5 4c4 0 8 2 7 8ZM12 13c5 0 7-4 7-7-4 0-7 2-7 7Z" fill="${c}" stroke="${INK}" stroke-width="1.4"/>`,
+SUSPICIOUS_INTERPOLATION src/ui/icons.ts 12 crystal: c => `<path d="M12 2 17 8 15 20H9L7 8Z" fill="${c}" stroke="${INK}" stroke-width="1.5" stroke-linejoin="round"/><path d="M12 2v18M7 8h10" stroke="#fff6c0" stroke-width="1" opacity=".6"/><circle cx="12" cy="11" r="5" fill="${c}" opacity=".25"/>`,
+SUSPICIOUS_INTERPOLATION src/ui/icons.ts 13 shard: c => `<path d="M9 21 5 12 10 3l3 8 6-3-4 13Z" fill="${c}" stroke="${INK}" stroke-width="1.5" stroke-linejoin="round"/><path d="M10 3l-1 18M13 11l6-3" stroke="#c7a0ff" stroke-width="1" opacity=".7"/>`,
+SUSPICIOUS_INTERPOLATION src/ui/icons.ts 14 sulfur: c => `<path d="M4 18 7 10l3 3 2-7 3 6 2-2 3 8Z" fill="${c}" stroke="${INK}" stroke-width="1.5" stroke-linejoin="round"/><circle cx="8" cy="6" r="1.2" fill="${c}"/><circle cx="17" cy="7" r="1" fill="${c}"/>`,
+SUSPICIOUS_INTERPOLATION src/ui/icons.ts 15 tusk: c => `<path d="M5 20C5 11 10 5 19 4c-5 3-8 8-8 16Z" fill="${c}" stroke="${INK}" stroke-width="1.5" stroke-linejoin="round"/><path d="M5 20h6" stroke="${INK}" stroke-width="2"/>`,
+SUSPICIOUS_INTERPOLATION src/ui/icons.ts 16 hide: c => `<path d="M6 4h12l2 5-2 3 2 4-3 5H7l-3-5 2-4-2-3Z" fill="${c}" stroke="${INK}" stroke-width="1.5" stroke-linejoin="round"/><path d="M9 9h6M9 13h6M10 17h4" stroke="${INK}" stroke-width="1" opacity=".4"/>`,
+SUSPICIOUS_INTERPOLATION src/ui/icons.ts 17 scale: c => `<path d="M12 3c5 3 7 7 7 11a7 7 0 0 1-14 0c0-4 2-8 7-11Z" fill="${c}" stroke="${INK}" stroke-width="1.5"/><path d="M12 6v14M8 12c2 1 6 1 8 0" stroke="#fff" stroke-width="1" opacity=".45" fill="none"/>`,
+SUSPICIOUS_INTERPOLATION src/ui/icons.ts 18 claw: c => `<path d="M6 20c0-7 3-13 11-16-3 4-4 7-3 11l-3 5Z" fill="${c}" stroke="${INK}" stroke-width="1.5" stroke-linejoin="round"/><path d="M12 20c1-4 3-7 7-9-1 3-2 6-4 9Z" fill="${c}" stroke="${INK}" stroke-width="1.3"/>`,
+SUSPICIOUS_INTERPOLATION src/ui/icons.ts 19 shell: c => `<path d="M3 15a9 8 0 0 1 18 0v2H3Z" fill="${c}" stroke="${INK}" stroke-width="1.5"/><path d="M12 7v10M7 9l2 8M17 9l-2 8" stroke="#ffb070" stroke-width="1.2"/>`,
+SUSPICIOUS_INTERPOLATION src/ui/icons.ts 20 pelt: c => `<path d="M5 6c3-2 11-2 14 0l-1 5 2 3-3 2 1 4-4-1-2 2-2-2-4 1 1-4-3-2 2-3Z" fill="${c}" stroke="${INK}" stroke-width="1.5" stroke-linejoin="round"/><path d="M9 8l1 3M15 8l-1 3M12 10v4" stroke="#ff9a4a" stroke-width="1.2"/>`,
+SUSPICIOUS_INTERPOLATION src/ui/icons.ts 21 plate: c => `<path d="M4 7 12 3l8 4v7l-8 7-8-7Z" fill="${c}" stroke="${INK}" stroke-width="1.5" stroke-linejoin="round"/><path d="M4 7l8 4 8-4M12 11v10" stroke="${INK}" stroke-width="1" opacity=".45"/>`,
+SUSPICIOUS_INTERPOLATION src/ui/icons.ts 22 horn: c => `<path d="M6 21c1-7 2-12 9-18 1 6-1 11-4 14Z" fill="${c}" stroke="${INK}" stroke-width="1.5" stroke-linejoin="round"/><path d="M9 16l3 1M10 12l3 1M12 8l2 1" stroke="${INK}" stroke-width="1" opacity=".5"/>`,
+SUSPICIOUS_INTERPOLATION src/ui/icons.ts 23 crest: c => `<path d="M12 2 15 8l6 1-4 5 1 7-6-3-6 3 1-7-4-5 6-1Z" fill="${c}" stroke="${INK}" stroke-width="1.5" stroke-linejoin="round"/><circle cx="12" cy="12" r="2.6" fill="#fff4c0" stroke="${INK}"/>`,
+SUSPICIOUS_INTERPOLATION src/ui/icons.ts 24 heart: c => `<path d="M12 20S3 14 3 8.5A4.5 4.5 0 0 1 12 6a4.5 4.5 0 0 1 9 2.5C21 14 12 20 12 20Z" fill="${c}" stroke="${INK}" stroke-width="1.5"/><path d="M9 9c1 2 2 3 3 6 1-3 2-4 3-6" stroke="#ffe07a" stroke-width="1.4" fill="none"/>`,
+SUSPICIOUS_INTERPOLATION src/ui/icons.ts 25 potion: c => `<path d="M9 3h6v4l4 6a5 5 0 0 1-4 8H9a5 5 0 0 1-4-8l4-6Z" fill="${c}" stroke="${INK}" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 3h8" stroke="${INK}" stroke-width="2"/><path d="M7 14h10" stroke="#fff" opacity=".5"/>`,
+SUSPICIOUS_INTERPOLATION src/ui/icons.ts 26 meat: c => `<path d="M5 14c0-5 5-9 10-8 3 1 4 4 3 7-1 4-6 7-10 6-2-1-3-3-3-5Z" fill="${c}" stroke="${INK}" stroke-width="1.4"/><path d="M16 12l4 4" stroke="#f4ead2" stroke-width="2.4" stroke-linecap="round"/><circle cx="20.5" cy="16.5" r="1.6" fill="#f4ead2" s
+SUSPICIOUS_INTERPOLATION src/ui/icons.ts 27 mushroom: c => `<path d="M11 21v-8M15 21v-5" stroke="#dfeee6" stroke-width="2.2" stroke-linecap="round"/><path d="M5 13a6 5 0 0 1 12 0Z" fill="${c}" stroke="${INK}" stroke-width="1.4"/><path d="M12 16a4 3 0 0 1 8 0Z" fill="${c}" stroke="${INK}" stroke-width="1
+SUSPICIOUS_INTERPOLATION src/ui/icons.ts 28 snare: c => `<circle cx="12" cy="13" r="7" fill="none" stroke="${c}" stroke-width="2.6"/><circle cx="12" cy="13" r="7" fill="none" stroke="${INK}" stroke-width=".8" opacity=".6"/><path d="M17 5l3-3M18 3l1 5" stroke="#9a6a40" stroke-width="1.8" stroke-linecap="
+SUSPICIOUS_INTERPOLATION src/ui/icons.ts 29 pit: c => `<ellipse cx="12" cy="15" rx="9" ry="4.5" fill="#2a1e14" stroke="${INK}" stroke-width="1.4"/><path d="M3 12l18 5M5 17l15-6" stroke="${c}" stroke-width="1.8" stroke-linecap="round"/>`,
+SUSPICIOUS_INTERPOLATION src/ui/icons.ts 30 pod: c => `<circle cx="12" cy="13" r="7" fill="${c}" stroke="${INK}" stroke-width="1.4"/><path d="M12 6c0-2 1-3 3-4" stroke="#6a8a3a" stroke-width="1.6" fill="none"/><circle cx="10" cy="11" r="2" fill="#fff" opacity=".8"/>`,
+SUSPICIOUS_INTERPOLATION src/ui/icons.ts 34 return `<svg class="ico" viewBox="0 0 24 24" width="${size}" height="${size}" aria-hidden="true">${P[id](color)}</svg>`
+SUSPICIOUS_INTERPOLATION src/ui/icons.ts 42 ? `<path d="M6 20 15 8" stroke="#7a4e2c" stroke-width="2.4" stroke-linecap="round"/><path d="M13 3l7 3-2 6-6-2Z" fill="${tint}" stroke="${INK}" stroke-width="1.4" stroke-linejoin="round"/>`
+SUSPICIOUS_INTERPOLATION src/ui/icons.ts 44 ? `<path d="M7 3h10l3 5-3 2v10H7V10L4 8Z" fill="${tint}" stroke="${INK}" stroke-width="1.4" stroke-linejoin="round"/><path d="M9 12h6M9 15h6" stroke="${INK}" opacity=".45"/>`
+SUSPICIOUS_INTERPOLATION src/ui/icons.ts 45 : `<path d="M5 20 14 11" stroke="#7a4e2c" stroke-width="2.4" stroke-linecap="round"/><path d="M11 5c4-2 8 0 9 3-3-1-5 0-6 2Z" fill="${tint}" stroke="${INK}" stroke-width="1.4"/>`
+SUSPICIOUS_INTERPOLATION src/ui/icons.ts 46 return `<svg class="ico" viewBox="0 0 24 24" width="${size}" height="${size}" aria-hidden="true">${body}</svg>`
+ENGLISH_COPY src/ui/touch.ts 21 'has-touch'
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 15 return PAINTED.has(id) ? `<img class="pi" src="./ui/icons/${id}.webp" width="${size}" height="${size}" alt="" draggable="false">` : icon(it.icon, it.color, size)
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 38 return h > 0 ? `${h}h ${String(m % 60).padStart(2, '0')}m` : `${m}m ${String(Math.floor(s % 60)).padStart(2, '0')}s`
+ENGLISH_COPY src/ui/ui.ts 38 "${h}h ${String(m % 60).padStart(2, '0')}m"
+ENGLISH_COPY src/ui/ui.ts 38 "${m}m ${String(Math.floor(s % 60)).padStart(2, '0')}s"
+ENGLISH_COPY src/ui/ui.ts 119 'click'
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 132 <div class="logo small">${LOGO}</div>
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 139 <div class="logo">${LOGO}</div>
+ENGLISH_COPY src/ui/ui.ts 144 './enemies/'
+ENGLISH_COPY src/ui/ui.ts 255 'new-after'
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 266 <div class="help-tips"><h4>狩猟の心得</h4><ul>${TIPS.map(t => `<li>${t}</li>`).join('')}</ul></div>
+ENGLISH_COPY src/ui/ui.ts 275 'lg you'
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 521 return `<div class="costs">${(Object.entries(cost) as [ItemId, number][])
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 525 return `<span class="cost ${have >= need ? 'ok' : 'no'}" title="${esc(it.name)}">${itemIcon(id, 24)}<b>${Math.min(have, 99)}/${need}</b><small>${esc(it.name)}</small></span>`
+ENGLISH_COPY src/ui/ui.ts 525 '<span class="cost ${have >= need ? \'ok\' : \'no\'}" title="${esc(it.name)}">${itemIcon(id, 24)}<b>${Math.min(have, 99)}/${need}</b><small>${esc(it.name)}</small></span>'
+ENGLISH_COPY src/ui/ui.ts 534 'on'
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 537 this.el.where.innerHTML = atCamp ? `<span class="ok">● キャンプにいる</span> · stage ${ROMAN[p.campStage]}` : `<span class="no">● 野外にいる</span> · クラフトにはキャンプのかまどが必要です`
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 547 .map(([name, list]) => `<h4>${name}</h4>${list.length ? `<div class="items">${list.map(id => `<div class="item k-${ITEMS[id].kind}" title="${esc(ITEMS[id].desc)}">${itemIcon(id, 44)}<b>${count(p, id)}</b><span>${esc(ITEMS[id].name)}</span><small>${esc(ITEMS[id
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 550 html += `<h4>狩猟記録</h4>${hunts.length ? `<div class="hunts">${hunts.map(([s, n]) => `<span><b>${n}×</b> ${esc(SPECIES[s].name)}</span>`).join('')}</div>` : '<p class="muted">狩猟記録はありません。</p>'}`
+ENGLISH_COPY src/ui/ui.ts 550 '<span><b>${n}×</b> ${esc(SPECIES[s].name)}</span>'
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 552 html = `<div class="recipes">${RECIPES.map(r => {
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 558 const cls = wcls ? ` · <b class="cls c-${wcls}">${WEAPON_CLASSES[wcls].name}</b>` : ''
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 561 ? `攻撃力 <b>${gear.attack}</b>${cls}<br><small class="clsdesc">${esc(WEAPON_CLASSES[wcls!].desc)}</small>`
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 565 : r.item === 'poultice' ? `Heals <b>45</b> · carry up to 5` : `Gadget · carry up to <b>${r.item === 'flashPod' ? 5 : r.item === 'snare' ? 3 : 2}</b> · you have <b>${count(p, r.item!)}</b>`
+ENGLISH_COPY src/ui/ui.ts 565 'Heals <b>45</b> · carry up to 5'
+ENGLISH_COPY src/ui/ui.ts 565 "Gadget · carry up to <b>${r.item === 'flashPod' ? 5 : r.item === 'snare' ? 3 : 2}</b> · you have <b>${count(p, r.item!)}</b>"
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 566 const ic = gear ? `<span class="gi">${PAINTED_GEAR.has(gear.id) ? `<img class="pi" src="./ui/icons/${gear.id}.webp" width="40" height="40" alt="">` : gearIcon(gear.slot, gear.tier)}</span>` : `<span class="gi">${itemIcon(r.item!, 40)}</span>`
+ENGLISH_COPY src/ui/ui.ts 566 '<span class="gi">${PAINTED_GEAR.has(gear.id) ? '
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 567 const label = st === 'owned' ? '所持中' : st === 'full' ? 'いっぱい' : st === 'locked' ? `キャンプ ${ROMAN[r.stage]}` : '作成'
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 569 return `<div class="recipe s-${st}">${ic}<div class="rinfo"><b>${esc(name)}</b><small>${esc(desc)}</small><span class="stat">${statLine}</span>${st !== 'owned' ? this.costChips(r.cost) : ''}</div>
+ENGLISH_COPY src/ui/ui.ts 569 'recipe s-${st}'
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 570 <button class="btn sm ${can ? 'primary' : ''}" data-act="craft" data-id="${r.id}" ${can ? '' : 'disabled'}>${label}</button></div>`
+ENGLISH_COPY src/ui/ui.ts 570 "btn sm ${can ? 'primary' : ''}"
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 574 const pips = [1, 2, 3].map(s => `<div class="pip ${p.campStage >= s ? 'done' : next?.stage === s ? 'next' : ''}"><b>${ROMAN[s]}</b><span>${esc(CAMP_STAGES[s - 1].name)}</span></div>`).join('<i class="pipline"></i>')
+ENGLISH_COPY src/ui/ui.ts 574 '<div class="pip ${p.campStage >= s ? \'done\' : next?.stage === s ? \'next\' : \'\'}"><b>${ROMAN[s]}</b><span>${esc(CAMP_STAGES[s - 1].name)}</span></div>'
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 575 html = `<div class="camp-stages">${pips}</div>`
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 578 html += `<div class="card"><h4>次の段階：${esc(next.name)} <small>（${ROMAN[next.stage]} / III）</small></h4><p>${esc(next.desc)}</p>${this.costChips(next.cost)}
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 579 <button class="btn ${ok && atCamp ? 'primary' : ''}" data-act="upgrade" ${ok && atCamp ? '' : 'disabled'}>${atCamp ? (ok ? 'Build' : '素材不足') : 'キャンプに戻って建設'}</button></div>`
+ENGLISH_COPY src/ui/ui.ts 579 'Build'
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 582 html += `<div class="card tower"><h4>狼煙の塔</h4><p>${ts === 'done' ? '狼煙が上がりました。救助が向かっています。' : ts === 'locked' ? '建設にはストーンホールド（キャンプ段階III）が必要です。' : '頂点捕食者の戦利品と燃料を集め、狼煙の塔を建てて火を灯そう。探索はここで完了します。'}</p>
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 584 ${ts === 'ready' || ts === 'missing' ? `<button class="btn ${ts === 'ready' && atCamp ? 'primary glow' : ''}" data-act="tower" ${ts === 'ready' && atCamp ? '' : 'disabled'}>${ts === 'ready' ? 'Restore the 狼煙の塔' : '素材不足'}</button>` : ''}</div>`
+ENGLISH_COPY src/ui/ui.ts 584 'ready'
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 592 html = `<div class="statline"><span>攻撃力 <b>${s.attack}</b></span><span>防御力 <b>${Math.round(s.defense * 100)}%</b></span><span>最大体力 <b>${s.maxHp}</b></span><span>耐熱 <b class="${s.heatProof ? 'ok' : 'no'}">${s.heatProof ? '耐熱' : '無防備'}</b></span><span>剥ぎ取り <b>+$
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 595 html += `<h4>${slot === 'weapon' ? '武器' : slot === 'armor' ? '防具' : '道具'}</h4><div class="gear-list">${list
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 599 const gi = PAINTED_GEAR.has(gd.id) ? `<img class="pi" src="./ui/icons/${gd.id}.webp" width="44" height="44" alt="">` : gearIcon(slot, gd.tier)
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 600 const wc = slot === 'weapon' ? `<em class="cls c-${weaponClass(gd.id)}">${WEAPON_CLASSES[weaponClass(gd.id)].name} · ${gd.attack}</em>` : ''
+ENGLISH_COPY src/ui/ui.ts 600 '<em class="cls c-${weaponClass(gd.id)}">${WEAPON_CLASSES[weaponClass(gd.id)].name} · ${gd.attack}</em>'
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 601 return `<div class="gearcard ${own ? '' : 'missing'} ${on ? 'on' : ''}">${gi}<b>${esc(gd.name)}</b>${wc}<small>${own ? esc(gd.desc) : '未作成'}</small>${own && slot !== 'tool' ? `<button class="btn sm" data-act="equip" data-id="${gd.id}" ${on ? 'disabled' : ''}>$
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 616 html += `<div class="card meal-now"><img class="pi" src="./ui/icons/${m.id}.webp" width="56" height="56" alt=""><div><h4>食事済み：${esc(m.name)} <small class="q-${p.meal.q}">${p.meal.q === 'perfect' ? '絶妙な焼き加減' : p.meal.q === 'charred' ? '焦げた' : 'よく焼けた'}</small></
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 622 html += `<div class="sear ${this.sear.done ? 'done' : ''}" data-el-sear><h4>調理中：${esc(m.name)}…</h4>
+ENGLISH_COPY src/ui/ui.ts 622 "sear ${this.sear.done ? 'done' : ''}"
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 623 <div class="sgauge"><i class="zg" style="left:${g0 * 100}%;width:${(g1 - g0) * 100}%"></i><i class="zp" style="left:${p0 * 100}%;width:${(p1 - p0) * 100}%"></i><b class="sneedle" data-sneedle></b></div>
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 627 html += `<div class="recipes meals">${MEAL_ORDER.map(id => {
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 631 const label = st === 'locked' ? `キャンプ ${ROMAN[m.stage]}` : !atCamp ? 'かまどで調理' : st === 'missing' ? '不足' : '料理する'
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 632 return `<div class="recipe s-${st}"><span class="gi"><img class="pi" src="./ui/icons/${id}.webp" width="44" height="44" alt=""></span><div class="rinfo"><b>${esc(m.name)}</b><span class="stat buff">${esc(m.desc)}</span>${this.costChips(m.cost)}</div>
+ENGLISH_COPY src/ui/ui.ts 632 'recipe s-${st}'
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 633 <button class="btn sm ${can ? 'primary' : ''}" data-act="cook" data-id="${id}" ${can ? '' : 'disabled'}>${label}</button></div>`
+ENGLISH_COPY src/ui/ui.ts 633 "btn sm ${can ? 'primary' : ''}"
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 681 this.fx.fly(`<img class="pi" src="./ui/icons/${sr.id}.webp" width="40" height="40" alt="">`, [cx, cy], meal, '#ffd27a')
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 698 return `<button class="jcard ${sp === this.journalSel ? 'on' : ''} ${k.seen ? '' : 'unknown'} ${d.boss ? 'boss' : ''}" data-act="jsel" data-id="${sp}">
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 699 <b>${k.seen ? esc(d.name) : '???'}</b><small>${k.seen ? esc(REGION_NAMES[d.region]) : '未発見'}</small>
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 700 <span class="jbadges">${k.tracked ? '<i class="jb trk" title="追跡中"></i>' : ''}${k.weak ? '<i class="jb wk" title="弱点判明"></i>' : ''}${k.hunted ? `<i class="jb hn">${k.hunts}</i>` : ''}</span></button>`
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 707 page = `<div class="jpage unknown"><h3>未知の獣</h3><p>${esc(REGION_NAMES[d.region])}に生息すると噂されています。姿を見つけると記録が始まります。</p></div>`
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 709 const pips = Array.from({ length: TRACKING.cluesNeeded }, (_, i) => `<i class="pip ${i < k.clues ? 'on' : ''}"></i>`).join('')
+ENGLISH_COPY src/ui/ui.ts 709 '<i class="pip ${i < k.clues ? \'on\' : \'\'}"></i>'
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 711 const diagram = `<svg class="wzone" viewBox="-50 -50 100 100" width="92" height="92"><circle r="40" fill="rgba(0,0,0,.18)" stroke="#6b5236" stroke-width="2"/>${k.weak ? `<path d="${zone === 'head' ? 'M0 0 L-17 -37 A40 40 0 0 1 17 -37 Z' : zone === 'rear' ? 'M0
+ENGLISH_COPY src/ui/ui.ts 711 '<svg class="wzone" viewBox="-50 -50 100 100" width="92" height="92"><circle r="40" fill="rgba(0,0,0,.18)" stroke="#6b5236" stroke-width="2"/>${k.weak ? '
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 714 ? `<p><b>生息地：</b> ${esc(d.habitat)}</p>${d.prey?.length ? `<p><b>捕食対象：</b> ${d.prey.map(x => esc(SPECIES[x].name)).join(', ')}。食事中に奇襲しましょう。</p>` : ''}${preds.length ? `<p><b>天敵：</b> ${preds.map(x => esc(SPECIES[x].name)).join(', ')}</p>` : ''}`
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 715 : `<p class="muted">${TRACKING.cluesNeeded}個の手がかり（足跡、フン、爪痕）を調べると、生息地や生態がわかります。</p>`
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 717 ? `<ul class="jatk">${d.attacks.map(a => `<li><b>${esc(a.name)}</b> <small>${esc(a.desc)}</small></li>`).join('')}</ul>`
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 723 drops = `<div class="jdrops">${[...all].map(id => k.parts.includes(id) || k.exact ? `<span>${itemIcon(id, 28)}${esc(ITEMS[id].name)}</span>` : '<span class="q">?</span>').join('')}</div>`
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 726 drops = `<div class="jdrops">${d.drops.map(x => k.parts.includes(x.item) || k.exact ? `<span>${itemIcon(x.item, 28)}${esc(ITEMS[x.item].name)}${k.exact ? `<b>${Math.round((x.weight / total) * 100)}%</b>` : ''}</span>` : '<span class="q">?</span>').join('')}</d
+ENGLISH_COPY src/ui/ui.ts 726 '<div class="jdrops">${d.drops.map(x => k.parts.includes(x.item) || k.exact ? '
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 728 page = `<div class="jpage"><header><h3>${esc(d.name)}</h3><small>${esc(d.title)}</small>${k.tracked ? '<em class="tag trk">追跡中</em>' : ''}</header>
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 729 <p class="lore">${esc(d.lore)}</p>
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 730 <div class="jgrid"><div><h5>弱点</h5>${diagram}<p>${k.weak ? `<b>${esc(d.weak.label)}</b>に与えるダメージ ×${d.weak.mult}` : '<span class="muted">攻撃して弱点を見つけよう</span>'}</p></div>
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 731 <div><h5>追跡</h5><div class="pips">${pips}</div><p>${k.clues}/${TRACKING.cluesNeeded}個の手がかり${k.tracked ? ' · 追跡中' : ''}</p><h5>記録</h5><p>討伐数 <b>${k.hunts}</b>${k.best ? ` · 最速 <b>${fmtTime(k.best)}</b>` : ''}</p></div></div>
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 734 return `<div class="journal"><div class="jlist">${list}</div>${page}</div>`
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 831 existing.el.querySelector('b')!.textContent = `+${existing.n}`
+ENGLISH_COPY src/ui/ui.ts 840 '${itemIcon(id, 28)}<b>+${n}</b><span>${esc(it.name)}</span><small>${count(this.game!.progress, id)}</small>'
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 867 ['頂点捕食者s', `${Number(p.bosses.ruinhorn) + Number(p.bosses.vulkarr)} / 2`],
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 870 ['探索した地域', `${p.regions.length} / 3`],
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 884 const key = `${p.held}|${p.weapon}|${p.owned.includes('flintHatchet')}|${p.owned.includes('flintPick')}|${sling ? count(p, 'stone') : ''}`
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 889 `<div class="hslot ${p.held === id ? 'on' : ''} ${own ? '' : 'locked'}" data-slot="${id}" title="${esc(name)}"><img src="${img}" alt="" draggable="false" width="44" height="44"><kbd>${n}</kbd><small>${esc(own ? name : 'キャンプで作成')}</small></div>`
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 891 slot('weapon', 1, PAINTED_GEAR.has(w.id) ? `./ui/icons/${w.id}.webp` : './ui/icons/gear-weapon.webp', w.name, true).replace('</div>', sling ? `<b class="ammo ${count(p, 'stone') ? '' : 'empty'}">${count(p, 'stone')}</b></div>` : '</div>') +
+ENGLISH_COPY src/ui/ui.ts 930 '${Math.max(0, h.frac) * 100}%'
+ENGLISH_COPY src/ui/ui.ts 979 'on'
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 1110 E.objStep.textContent = o.id === 'victory' ? '完了' : `目標 ${o.step} / ${o.total}`
+ENGLISH_COPY src/ui/ui.ts 1120 '${Math.round(d)} m'
+ENGLISH_COPY src/ui/ui.ts 1137 '${Math.round(d)}m'
+ENGLISH_COPY src/ui/ui.ts 1149 '${Math.round(Math.hypot(op.x - P.pos.x, op.z - P.pos.z))}m'
+ENGLISH_COPY src/ui/ui.ts 1167 '${Math.round(td)}m'
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 1208 E.gadgetImg.setAttribute('src', `./ui/icons/${gd}.webp`)
+SUSPICIOUS_INTERPOLATION src/ui/ui.ts 1233 E.mealImg.setAttribute('src', `./ui/icons/${m.id}.webp`)
+ENGLISH_COPY src/ui/ui.ts 1241 "${Math.floor(m.t / 60)}:${String(Math.floor(m.t % 60)).padStart(2, '0')}"
+SUSPICIOUS_INTERPOLATION src/lab.ts 88 const parts = Object.entries(s).filter(([k]) => k !== 'kind').map(([k, v]) => `${shapeLabels[k] ?? k} ${typeof v === 'number' ? +v.toFixed(2) : String(v)}`)
+SUSPICIOUS_INTERPOLATION src/lab.ts 101 <nav class="species">${ids.map(id => `<button data-sp="${id}"><b>${esc(SPECIES[id].name)}</b><small>${SPECIES[id].boss ? '<em>頂点捕食者</em> · ' : ''}${esc(REGION_NAMES[SPECIES[id].region])}</small></button>`).join('')}</nav>
+ENGLISH_COPY src/lab.ts 127 'drops'
+SUSPICIOUS_INTERPOLATION src/lab.ts 130 const el = (k: string) => root.querySelector<HTMLElement>(`[data-el="${k}"]`)!
+ENGLISH_COPY src/lab.ts 231 'on'
+SUSPICIOUS_INTERPOLATION src/lab.ts 234 el('title').innerHTML = `${esc(d.title)} · ${esc(REGION_NAMES[d.region])}${d.boss ? ' · <em>頂点捕食者</em>' : ''}`
+SUSPICIOUS_INTERPOLATION src/lab.ts 236 ['体力', d.hp], ['怯み耐性', d.poise], ['歩行 / 走行', `${d.walk} / ${d.run} m/s`], ['旋回速度', `${d.turn} rad/s`],
+SUSPICIOUS_INTERPOLATION src/lab.ts 237 ['体半径', `${d.radius} m`], ['体高', `${d.height} m`], ['感知範囲', `${d.aggro} m`], ['追跡限界', `${d.leash} m`], ['剥ぎ取り回数', d.carves], ['弱点', `${d.weak.label}（${zoneLabels[d.weak.zone] ?? d.weak.zone}）×${d.weak.mult}`], ['生息地', d.habitat], ['獲物', d.prey?.length ? d.prey
+ENGLISH_COPY src/lab.ts 237 '${d.radius} m'
+ENGLISH_COPY src/lab.ts 237 '${d.height} m'
+ENGLISH_COPY src/lab.ts 237 '${d.aggro} m'
+ENGLISH_COPY src/lab.ts 237 '${d.leash} m'
+ENGLISH_COPY src/lab.ts 237 '${d.weak.label}（${zoneLabels[d.weak.zone] ?? d.weak.zone}）×${d.weak.mult}'
+SUSPICIOUS_INTERPOLATION src/lab.ts 239 el('attacks').innerHTML = d.attacks.map(a => `<div class="atk" data-atk="${a.id}">
+SUSPICIOUS_INTERPOLATION src/lab.ts 240 <header><b>${esc(a.name)}</b><span class="tags">${a.behind ? '<em>背後攻撃</em>' : ''}${a.enragedOnly ? '<em class="rage">怒り時限定</em>' : ''}<em>${knockLabels[a.knock] ?? a.knock}</em></span>
+SUSPICIOUS_INTERPOLATION src/lab.ts 241 <button data-play="${a.id}">再生</button><button data-loop="${a.id}" title="繰り返し">ループ</button></header>
+SUSPICIOUS_INTERPOLATION src/lab.ts 243 <div class="bar"><i class="w" style="flex:${a.windup}"></i><i class="a" style="flex:${a.active}"></i><i class="r" style="flex:${a.recovery}"></i></div>
+SUSPICIOUS_INTERPOLATION src/lab.ts 244 <table class="kv sm"><tr><th>予備動作 / 攻撃 / 硬直</th><td>${a.windup}s / ${a.active}s / ${a.recovery}s</td></tr>
+ENGLISH_COPY src/lab.ts 247 'drops'
+SUSPICIOUS_INTERPOLATION src/lab.ts 248 ? `<ol class="drops">${d.bossCarves.map(cv => `<li>${Object.entries(cv).map(([k, n]) => `${n}× ${esc(ITEMS[k as keyof typeof ITEMS].name)}`).join(', ')}</li>`).join('')}</ol>`
+ENGLISH_COPY src/lab.ts 248 '<ol class="drops">${d.bossCarves.map(cv => '
+SUSPICIOUS_INTERPOLATION src/lab.ts 251 return `<ul class="drops">${d.drops.map(dr => `<li>${esc(ITEMS[dr.item].name)} <small>(${Math.round((dr.weight / total) * 100)}% 剥ぎ取りごと)</small></li>`).join('')}</ul>`
+ENGLISH_COPY src/lab.ts 251 '<ul class="drops">${d.drops.map(dr => '
+ENGLISH_COPY src/lab.ts 301 'on'
+SUSPICIOUS_INTERPOLATION src/lab.ts 312 log(`軽攻撃 → ${r.dealt} ダメージ${r.punish ? '（好機）' : ''}${r.stagger ? ' · 怯み' : ''}`)
+SUSPICIOUS_INTERPOLATION src/lab.ts 315 log(`強攻撃 → ${r.dealt} ダメージ${r.punish ? '（好機）' : ''}${r.stagger ? ' · 怯み' : ''}`)
+SUSPICIOUS_INTERPOLATION src/lab.ts 336 el('yawOut').textContent = `${yawDeg}°`
+SUSPICIOUS_INTERPOLATION src/lab.ts 340 el('distOut').textContent = `${t.value} m`
+ENGLISH_COPY src/lab.ts 340 '${t.value} m'
+SUSPICIOUS_INTERPOLATION src/lab.ts 343 el('speedOut').textContent = `${t.value}×`
+SUSPICIOUS_INTERPOLATION src/lab.ts 415 ['ルート回転（YXZ、度）', `x ${deg(eu.x)} · y ${deg(eu.y)} · z ${deg(eu.z)}`],
+SUSPICIOUS_INTERPOLATION src/lab.ts 416 ['ルートクォータニオン（x, y, z, w）', `${f3(q.x)}, ${f3(q.y)}, ${f3(q.z)}, ${f3(q.w)}`],
+SUSPICIOUS_INTERPOLATION src/lab.ts 417 ['論理上の向き', `${deg(c.yaw)}° （0°で前方＝+Z）`],
+SUSPICIOUS_INTERPOLATION src/lab.ts 418 ['前方ベクトル', `${f3(c.forward.x)}, 0, ${f3(c.forward.z)}`],
+SUSPICIOUS_INTERPOLATION src/lab.ts 419 ['位置', `${c.pos.x.toFixed(2)}, ${c.pos.y.toFixed(2)}, ${c.pos.z.toFixed(2)}`],
+SUSPICIOUS_INTERPOLATION src/lab.ts 420 ['境界寸法（幅 × 高さ × 奥行き）', `${size.x.toFixed(2)} × ${size.y.toFixed(2)} × ${size.z.toFixed(2)} m`],
+SUSPICIOUS_INTERPOLATION src/lab.ts 421 ['メッシュ · 三角形数', `${meshes} · ${Math.round(tris).toLocaleString()}`],
+SUSPICIOUS_INTERPOLATION src/lab.ts 424 el('stateName').textContent = `${stateLabels[c.state] ?? c.state}${c.enraged ? ' · 怒り' : ''}${c.open ? ' · 隙あり' : ''}`
+SUSPICIOUS_INTERPOLATION src/lab.ts 426 el('stateInfo').textContent = `体力 ${Math.ceil(c.hp)} / ${c.maxHp} · 怯み耐性 ${c.poise.toFixed(0)} / ${c.poiseMax}${a ? ` · ${a.name}` : ''}`
+SUSPICIOUS_INTERPOLATION src/lab.ts 437 el('playhead').style.left = `${Math.min(100, (tt / total) * 100)}%`
+[32mubuntu@sandbox:~/savageclash$ [0m

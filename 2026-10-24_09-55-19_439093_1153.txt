@@ -1,0 +1,426 @@
+# Terminal Full Output
+# Terminal: default-1
+# Command: python3 - <<'PY'
+from pathlib import Path
+import re
+paths=[Path('src/ui/ui.ts'),Path('src/main.ts'),Path('src/game/game.ts'),Path('src/game/data.ts'),Path('src/lab.ts')]
+# Extract lines containing natural-language words from quoted / template-literal source,
+# excluding comments and lines whose only matches are IDs/import identifiers.
+for p in paths:
+ print(f'-- {p} --')
+ for i,line in enumerate(p.read_text().splitlines(),1):
+  s=line.strip()
+  if not s or s.startswith(('//','*','/*')): continue
+  words=re.findall(r'[A-Za-z]{3,}',s)
+  if words and re.search(r'["\'`>]</|["\'`]|title|desc|lore|habitat|TIPS|CONTROLS|textContent|innerHTML|label|name',s,re.I):
+   # Show code line only when there are visible copy markers; identifiers alone are ignored.
+   if re.search(r'[>](?:[^<]*[A-Za-z])|(?:name|title|desc|lore|habitat|TIPS|CONTROLS|textContent|innerHTML)\s*[:=]',s,re.I):
+    print(f'{i}: {s[:280]}')
+PY
+printf '\n-- HTML user-visible words remaining in data fields --\n'; rg -n "(habitat:|lore:|desc:|name:|title:)" src/game/data.ts | rg "[A-Za-z]{3,}" | head -60
+# PID: 1153
+# Timestamp: 2026-10-24_09-55-19.439093
+# Original Length: 54203 characters
+# ----------------------------------------
+
+[32mubuntu@sandbox:~/savageclash$ [0mpython3 - <<'PY'
+from pathlib import Path
+import re
+paths=[Path('src/ui/ui.ts'),Path('src/main.ts'),Path('src/game/game.ts'),Path('src/game/data.ts'),Path('src/lab.ts')]
+# Extract lines containing natural-language words from quoted / template-literal source,
+# excluding comments and lines whose only matches are IDs/import identifiers.
+for p in paths:
+ print(f'-- {p} --')
+ for i,line in enumerate(p.read_text().splitlines(),1):
+  s=line.strip()
+  if not s or s.startswith(('//','*','/*')): continue
+  words=re.findall(r'[A-Za-z]{3,}',s)
+  if words and re.search(r'["\'`>]</|["\'`]|title|desc|lore|habitat|TIPS|CONTROLS|textContent|innerHTML|label|name',s,re.I):
+   # Show code line only when there are visible copy markers; identifiers alone are ignored.
+   if re.search(r'[>](?:[^<]*[A-Za-z])|(?:name|title|desc|lore|habitat|TIPS|CONTROLS|textContent|innerHTML)\s*[:=]',s,re.I):
+    print(f'{i}: {s[:280]}')
+PY
+printf '\n-- HTML user-visible words remaining in data fields --\n'; rg -n "(habitat:|lore:|desc:|name:|title:)" src/game/data.ts | rg "[A-Za-z]{3,}" | head -60
+-- src/ui/ui.ts --
+12: const PAINTED = new Set<string>(['amber', 'ashfangPelt', 'bone', 'emberCarapace', 'fiber', 'flint', 'herb', 'hogTusk', 'hornShard', 'magmaHeart', 'obsidian', 'poultice', 'roughHide', 'ruinCrest', 'ruinPlate', 'scorchScale', 'snapperScale', 'stalkerClaw', 'stalkerHide', 'stone', '
+15: return PAINTED.has(id) ? `<img class="pi" src="./ui/icons/${id}.webp" width="${size}" height="${size}" alt="" draggable="false">` : icon(it.icon, it.color, size)
+17: const PAINTED_GEAR = new Set<string>(['boneSpear', 'stalkerLance', 'reedSling', 'sinewSling', 'flintHatchet', 'flintPick'])
+34: const esc = (s: string) => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!)
+38: return h > 0 ? `${h}h ${String(m % 60).padStart(2, '0')}m` : `${m}m ${String(Math.floor(s % 60)).padStart(2, '0')}s`
+42: const CONTROLS: [string, string][] = [
+63: const TIPS = [
+116: this.root.innerHTML = this.template()
+117: for (const n of this.root.querySelectorAll<HTMLElement>('[data-el]')) this.el[n.dataset.el!] = n
+119: this.root.addEventListener('click', e => this.onClick(e))
+120: this.root.addEventListener('input', e => this.onInput(e))
+121: window.addEventListener('keydown', e => this.onKey(e))
+132: <div class="logo small">${LOGO}</div>
+139: <div class="logo">${LOGO}</div>
+171: <div class="chip slot" data-el="potChip" title="癒やし草の薬（R）"><img class="pi" src="./ui/icons/poultice.webp" width="26" height="26" alt=""><b data-el="potN">0</b><kbd>R</kbd></div>
+172: <div class="chip meal" data-el="mealChip" hidden title="食事効果"><i class="mring" data-el="mealRing"></i><img data-el="mealImg" src="./ui/icons/heartyHaunch.webp" width="28" height="28" alt=""><b data-el="mealT"></b><small data-el="mealName"></small></div>
+201: <div class="gadget" data-el="gadget" title="道具（Gで使用、Cで切替）"><img data-el="gadgetImg" src="./ui/icons/snare.webp" width="40" height="40" alt="" draggable="false"><b data-el="gadgetN">0</b><kbd>G</kbd><small data-el="gadgetName"></small><em><kbd>C</kbd> 切替</em></div>
+206: <div class="prompt" data-el="prompt"><kbd>E</kbd><span data-el="promptVerb"></span><small data-el="promptLabel"></small></div>
+208: <div class="hints"><kbd>H</kbd> 操作方法 <kbd>Tab</kbd> ポーチ <kbd>M</kbd> 地図 <kbd>B</kbd> 日誌<i class="jdot" data-el="jdot"></i></div>
+265: <dl>${CONTROLS.map(([k, v]) => `<dt><kbd>${k}</kbd></dt><dd>${v}</dd>`).join('')}</dl>
+266: <div class="help-tips"><h4>狩猟の心得</h4><ul>${TIPS.map(t => `<li>${t}</li>`).join('')}</ul></div>
+285: <label class="check"><input type="checkbox" data-set="invertY"> Y軸を反転</label>
+313: if (text) this.el.bootText.textContent = text
+318: for (const inp of this.root.querySelectorAll<HTMLInputElement | HTMLSelectElement>('[data-set]')) {
+340: const tabBtn = t.closest<HTMLElement>('[data-tab]')
+346: const b = t.closest<HTMLElement>('[data-act]')
+427: for (let i = 0; i < 5; i += 1) setTimeout(() => this.fx.burst(innerWidth * (0.3 + Math.random() * 0.4), innerHeight * (0.35 + Math.random() * 0.3), { color: ['#ffd27a', '#ff9a3a', '#fff2c8', '#9dff9a'], n: 36, speed: 420, kind: 'star', grav: 260, life: 1.1 }), i * 140)
+521: return `<div class="costs">${(Object.entries(cost) as [ItemId, number][])
+525: return `<span class="cost ${have >= need ? 'ok' : 'no'}" title="${esc(it.name)}">${itemIcon(id, 24)}<b>${Math.min(have, 99)}/${need}</b><small>${esc(it.name)}</small></span>`
+534: for (const b of this.root.querySelectorAll<HTMLElement>('[data-tab]')) b.classList.toggle('on', b.dataset.tab === tab)
+537: this.el.where.innerHTML = atCamp ? `<span class="ok">● キャンプにいる</span> · stage ${ROMAN[p.campStage]}` : `<span class="no">● 野外にいる</span> · クラフトにはキャンプのかまどが必要です`
+542: ['素材', ids.filter(i => ITEMS[i].kind === 'material')],
+543: ['獣の素材', ids.filter(i => ITEMS[i].kind === 'part')],
+544: ['重要アイテム・消耗品', ids.filter(i => ITEMS[i].kind === 'key' || ITEMS[i].kind === 'consumable')],
+547: .map(([name, list]) => `<h4>${name}</h4>${list.length ? `<div class="items">${list.map(id => `<div class="item k-${ITEMS[id].kind}" title="${esc(ITEMS[id].desc)}">${itemIcon(id, 44)}<b>${count(p, id)}</b><span>${esc(ITEMS[id].name)}</span><small>${esc(ITEMS[id].desc)}</small></di
+550: html += `<h4>狩猟記録</h4>${hunts.length ? `<div class="hunts">${hunts.map(([s, n]) => `<span><b>${n}×</b> ${esc(SPECIES[s].name)}</span>`).join('')}</div>` : '<p class="muted">狩猟記録はありません。</p>'}`
+552: html = `<div class="recipes">${RECIPES.map(r => {
+555: const name = gear ? gear.name : ITEMS[r.item!].name
+556: const desc = gear ? gear.desc : ITEMS[r.item!].desc
+558: const cls = wcls ? ` · <b class="cls c-${wcls}">${WEAPON_CLASSES[wcls].name}</b>` : ''
+561: ? `攻撃力 <b>${gear.attack}</b>${cls}<br><small class="clsdesc">${esc(WEAPON_CLASSES[wcls!].desc)}</small>`
+563: ? `防御力 <b>${Math.round((gear.defense ?? 0) * 100)}%</b> · Health <b>+${gear.hp}</b>${gear.heatProof ? ' · <b class="hot">Heat-proof</b>' : ''}`
+565: : r.item === 'poultice' ? `Heals <b>45</b> · carry up to 5` : `Gadget · carry up to <b>${r.item === 'flashPod' ? 5 : r.item === 'snare' ? 3 : 2}</b> · you have <b>${count(p, r.item!)}</b>`
+566: const ic = gear ? `<span class="gi">${PAINTED_GEAR.has(gear.id) ? `<img class="pi" src="./ui/icons/${gear.id}.webp" width="40" height="40" alt="">` : gearIcon(gear.slot, gear.tier)}</span>` : `<span class="gi">${itemIcon(r.item!, 40)}</span>`
+569: return `<div class="recipe s-${st}">${ic}<div class="rinfo"><b>${esc(name)}</b><small>${esc(desc)}</small><span class="stat">${statLine}</span>${st !== 'owned' ? this.costChips(r.cost) : ''}</div>
+570: <button class="btn sm ${can ? 'primary' : ''}" data-act="craft" data-id="${r.id}" ${can ? '' : 'disabled'}>${label}</button></div>`
+574: const pips = [1, 2, 3].map(s => `<div class="pip ${p.campStage >= s ? 'done' : next?.stage === s ? 'next' : ''}"><b>${ROMAN[s]}</b><span>${esc(CAMP_STAGES[s - 1].name)}</span></div>`).join('<i class="pipline"></i>')
+575: html = `<div class="camp-stages">${pips}</div>`
+578: html += `<div class="card"><h4>次の段階：${esc(next.name)} <small>（${ROMAN[next.stage]} / III）</small></h4><p>${esc(next.desc)}</p>${this.costChips(next.cost)}
+579: <button class="btn ${ok && atCamp ? 'primary' : ''}" data-act="upgrade" ${ok && atCamp ? '' : 'disabled'}>${atCamp ? (ok ? 'Build' : '素材不足') : 'キャンプに戻って建設'}</button></div>`
+582: html += `<div class="card tower"><h4>狼煙の塔</h4><p>${ts === 'done' ? '狼煙が上がりました。救助が向かっています。' : ts === 'locked' ? '建設にはストーンホールド（キャンプ段階III）が必要です。' : '頂点捕食者の戦利品と燃料を集め、狼煙の塔を建てて火を灯そう。探索はここで完了します。'}</p>
+584: ${ts === 'ready' || ts === 'missing' ? `<button class="btn ${ts === 'ready' && atCamp ? 'primary glow' : ''}" data-act="tower" ${ts === 'ready' && atCamp ? '' : 'disabled'}>${ts === 'ready' ? 'Restore the 狼煙の塔' : '素材不足'}</button>` : ''}</div>`
+592: html = `<div class="statline"><span>攻撃力 <b>${s.attack}</b></span><span>防御力 <b>${Math.round(s.defense * 100)}%</b></span><span>最大体力 <b>${s.maxHp}</b></span><span>耐熱 <b class="${s.heatProof ? 'ok' : 'no'}">${s.heatProof ? '耐熱' : '無防備'}</b></span><span>剥ぎ取り <b>+${s.carves}</b></span
+595: html += `<h4>${slot === 'weapon' ? '武器' : slot === 'armor' ? '防具' : '道具'}</h4><div class="gear-list">${list
+599: const gi = PAINTED_GEAR.has(gd.id) ? `<img class="pi" src="./ui/icons/${gd.id}.webp" width="44" height="44" alt="">` : gearIcon(slot, gd.tier)
+600: const wc = slot === 'weapon' ? `<em class="cls c-${weaponClass(gd.id)}">${WEAPON_CLASSES[weaponClass(gd.id)].name} · ${gd.attack}</em>` : ''
+601: return `<div class="gearcard ${own ? '' : 'missing'} ${on ? 'on' : ''}">${gi}<b>${esc(gd.name)}</b>${wc}<small>${own ? esc(gd.desc) : '未作成'}</small>${own && slot !== 'tool' ? `<button class="btn sm" data-act="equip" data-id="${gd.id}" ${on ? 'disabled' : ''}>${on ? '装備中' : '装備する'
+606: this.el.menuBody.innerHTML = html
+607: this.el.menuFoot.innerHTML = `<span><kbd>1</kbd>–<kbd>6</kbd> タブ</span><span><kbd>Tab</kbd>/<kbd>Esc</kbd> 閉じる</span>`
+616: html += `<div class="card meal-now"><img class="pi" src="./ui/icons/${m.id}.webp" width="56" height="56" alt=""><div><h4>食事済み：${esc(m.name)} <small class="q-${p.meal.q}">${p.meal.q === 'perfect' ? '絶妙な焼き加減' : p.meal.q === 'charred' ? '焦げた' : 'よく焼けた'}</small></h4><p>${esc(m.desc)}
+622: html += `<div class="sear ${this.sear.done ? 'done' : ''}" data-el-sear><h4>調理中：${esc(m.name)}…</h4>
+624: <p>${this.sear.done ? '' : '<kbd>Space</kbd>または<kbd>E</kbd>（またはクリック）で火から下ろす'}</p>
+627: html += `<div class="recipes meals">${MEAL_ORDER.map(id => {
+632: return `<div class="recipe s-${st}"><span class="gi"><img class="pi" src="./ui/icons/${id}.webp" width="44" height="44" alt=""></span><div class="rinfo"><b>${esc(m.name)}</b><span class="stat buff">${esc(m.desc)}</span>${this.costChips(m.cost)}</div>
+633: <button class="btn sm ${can ? 'primary' : ''}" data-act="cook" data-id="${id}" ${can ? '' : 'disabled'}>${label}</button></div>`
+661: const q: SearQuality = burnt ? 'charred' : x >= SEAR_ZONES.perfect[0] && x <= SEAR_ZONES.perfect[1] ? 'perfect' : x >= SEAR_ZONES.good[0] && x <= SEAR_ZONES.good[1] ? 'good' : 'charred'
+663: const gauge = this.root.querySelector<HTMLElement>('.sgauge')
+681: this.fx.fly(`<img class="pi" src="./ui/icons/${sr.id}.webp" width="40" height="40" alt="">`, [cx, cy], meal, '#ffd27a')
+699: <b>${k.seen ? esc(d.name) : '???'}</b><small>${k.seen ? esc(REGION_NAMES[d.region]) : '未発見'}</small>
+700: <span class="jbadges">${k.tracked ? '<i class="jb trk" title="追跡中"></i>' : ''}${k.weak ? '<i class="jb wk" title="弱点判明"></i>' : ''}${k.hunted ? `<i class="jb hn">${k.hunts}</i>` : ''}</span></button>`
+707: page = `<div class="jpage unknown"><h3>未知の獣</h3><p>${esc(REGION_NAMES[d.region])}に生息すると噂されています。姿を見つけると記録が始まります。</p></div>`
+709: const pips = Array.from({ length: TRACKING.cluesNeeded }, (_, i) => `<i class="pip ${i < k.clues ? 'on' : ''}"></i>`).join('')
+711: const diagram = `<svg class="wzone" viewBox="-50 -50 100 100" width="92" height="92"><circle r="40" fill="rgba(0,0,0,.18)" stroke="#6b5236" stroke-width="2"/>${k.weak ? `<path d="${zone === 'head' ? 'M0 0 L-17 -37 A40 40 0 0 1 17 -37 Z' : zone === 'rear' ? 'M0 0 L-17 37 A40 40 0 
+714: ? `<p><b>生息地：</b> ${esc(d.habitat)}</p>${d.prey?.length ? `<p><b>捕食対象：</b> ${d.prey.map(x => esc(SPECIES[x].name)).join(', ')}。食事中に奇襲しましょう。</p>` : ''}${preds.length ? `<p><b>天敵：</b> ${preds.map(x => esc(SPECIES[x].name)).join(', ')}</p>` : ''}`
+715: : `<p class="muted">${TRACKING.cluesNeeded}個の手がかり（足跡、フン、爪痕）を調べると、生息地や生態がわかります。</p>`
+717: ? `<ul class="jatk">${d.attacks.map(a => `<li><b>${esc(a.name)}</b> <small>${esc(a.desc)}</small></li>`).join('')}</ul>`
+723: drops = `<div class="jdrops">${[...all].map(id => k.parts.includes(id) || k.exact ? `<span>${itemIcon(id, 28)}${esc(ITEMS[id].name)}</span>` : '<span class="q">?</span>').join('')}</div>`
+726: drops = `<div class="jdrops">${d.drops.map(x => k.parts.includes(x.item) || k.exact ? `<span>${itemIcon(x.item, 28)}${esc(ITEMS[x.item].name)}${k.exact ? `<b>${Math.round((x.weight / total) * 100)}%</b>` : ''}</span>` : '<span class="q">?</span>').join('')}</div>${k.exact ? '' : 
+728: page = `<div class="jpage"><header><h3>${esc(d.name)}</h3><small>${esc(d.title)}</small>${k.tracked ? '<em class="tag trk">追跡中</em>' : ''}</header>
+729: <p class="lore">${esc(d.lore)}</p>
+730: <div class="jgrid"><div><h5>弱点</h5>${diagram}<p>${k.weak ? `<b>${esc(d.weak.label)}</b>に与えるダメージ ×${d.weak.mult}` : '<span class="muted">攻撃して弱点を見つけよう</span>'}</p></div>
+731: <div><h5>追跡</h5><div class="pips">${pips}</div><p>${k.clues}/${TRACKING.cluesNeeded}個の手がかり${k.tracked ? ' · 追跡中' : ''}</p><h5>記録</h5><p>討伐数 <b>${k.hunts}</b>${k.best ? ` · 最速 <b>${fmtTime(k.best)}</b>` : ''}</p></div></div>
+732: <h5>生態</h5>${eco}<h5>攻撃</h5>${atks}<h5>剥ぎ取り</h5>${drops}</div>`
+734: return `<div class="journal"><div class="jlist">${list}</div>${page}</div>`
+744: banner: (title, sub, kind) => this.banner(title, sub, kind),
+746: openMenu: tab => this.openMenu(tab ?? 'materials'),
+747: faint: () => this.show('faint'),
+765: el.className = `pop p-${kind}`
+766: el.textContent = text
+787: el.textContent = text
+788: el.className = `stamp s-${kind}`
+805: this.el.jnoteText.textContent = text
+820: t.textContent = text
+821: t.className = `toast on t-${kind}`
+831: existing.el.querySelector('b')!.textContent = `+${existing.n}`
+839: el.className = `fi k-${it.kind} bump`
+840: el.innerHTML = `${itemIcon(id, 28)}<b>+${n}</b><span>${esc(it.name)}</span><small>${count(this.game!.progress, id)}</small>`
+846: banner(title: string, sub: string, kind: 'region' | 'boss' | 'camp' = 'region'): void {
+847: this.el.bannerKind.textContent = kind === 'boss' ? '頂点捕食者' : kind === 'camp' ? 'キャンプ' : 'エリア到達'
+848: this.el.bannerTitle.textContent = title
+849: this.el.bannerSub.textContent = sub
+850: this.el.banner.className = `banner on b-${kind}`
+851: requestAnimationFrame(() => this.fx.outline(this.el.banner, { color: kind === 'boss' ? ['#ff6a3a', '#ffb45a'] : ['#ffd27a', '#fff2c8'], n: 46, speed: 90, grav: -40, life: 1.1, size: 9 }))
+856: this.el.tip.innerHTML = `<small>野外メモ</small>${html}`
+864: this.el.stats.innerHTML = [
+872: .map(([k, v]) => `<div><span>${k}</span><b>${v}</b></div>`)
+888: const slot = (id: string, n: number, img: string, name: string, own: boolean) =>
+889: `<div class="hslot ${p.held === id ? 'on' : ''} ${own ? '' : 'locked'}" data-slot="${id}" title="${esc(name)}"><img src="${img}" alt="" draggable="false" width="44" height="44"><kbd>${n}</kbd><small>${esc(own ? name : 'キャンプで作成')}</small></div>`
+890: E.hotbar.innerHTML =
+891: slot('weapon', 1, PAINTED_GEAR.has(w.id) ? `./ui/icons/${w.id}.webp` : './ui/icons/gear-weapon.webp', w.name, true).replace('</div>', sling ? `<b class="ammo ${count(p, 'stone') ? '' : 'empty'}">${count(p, 'stone')}</b></div>` : '</div>') +
+918: E.hbarName.textContent = h.label
+920: E.hbarNote.textContent = h.frac <= 0 ? (h.kind === 'tree' ? '伐採！' : '破壊！') : h.slow ? (h.kind === 'tree' ? '手斧なら効率よく伐採できます' : 'ピッケルなら効率よく採掘できます') : ''
+930: window.setTimeout(() => (E.hbarLost.style.width = `${Math.max(0, h.frac) * 100}%`), 260)
+1002: const n = this.root.querySelector<HTMLElement>('[data-sneedle]')
+1044: E.hpText.textContent = `${Math.ceil(P.hp)} / ${P.maxHp}`
+1060: if (this.lastHp >= 0 && P.hp > this.lastHp + 5) E.medHeart.classList.add('heal')
+1065: E.potN.textContent = String(g.progress.inv.poultice ?? 0)
+1080: E.bossName.textContent = b.def.name
+1081: E.bossTitle.textContent = b.def.title
+1086: E.bossTag.textContent = tag
+1087: E.bossTag.className = `tag ${rawTag === 'ENRAGED' ? 'rage' : tag ? 'open' : ''}`
+1093: E.tName.textContent = t.def.name
+1097: E.tTag.textContent = tag
+1098: E.tTag.className = `tag ${rawTag === 'ATTACKING' ? 'rage' : tag ? 'open' : ''}`
+1107: requestAnimationFrame(() => this.fx.outline(this.el.obj, { color: ['#ffd27a', '#fff2c8', '#9dff9a'], n: 60, speed: 120, grav: -20, life: 1.2, kind: 'star' }))
+1110: E.objStep.textContent = o.id === 'victory' ? '完了' : `目標 ${o.step} / ${o.total}`
+1111: E.objTitle.textContent = o.title
+1112: E.objDetail.textContent = o.ready ? '準備完了 — キャンプのかまどへ戻ろう' : o.detail
+1120: E.objDist.textContent = `${Math.round(d)} m`
+1137: E.markerDist.textContent = `${Math.round(d)}m`
+1140: E.objDist.textContent = ''
+1149: E.compassDist.textContent = `${Math.round(Math.hypot(op.x - P.pos.x, op.z - P.pos.z))}m`
+1152: E.compassDist.textContent = ''
+1167: E.tmarkerDist.textContent = `${Math.round(td)}m`
+1187: E.promptVerb.textContent = it.verb
+1188: E.promptLabel.textContent = it.label
+1195: E.region.textContent = REGION_NAMES[g.region]
+1206: const used = this.gadgetKey && this.gadgetKey.split('|')[0] === gd && Number(this.gadgetKey.split('|')[1]) > n
+1209: E.gadgetN.textContent = String(n)
+1210: E.gadgetName.textContent = ITEMS[gd].name
+1234: E.mealName.textContent = MEALS[m.id].name
+1235: E.mealChip.className = `chip meal q-${m.q}`
+1236: E.mealChip.title = `${MEALS[m.id].name}: ${MEALS[m.id].desc}`
+1241: E.mealT.textContent = `${Math.floor(m.t / 60)}:${String(Math.floor(m.t % 60)).padStart(2, '0')}`
+-- src/main.ts --
+11: document.title = '原始の夜明け：野生との戦い'
+19: const canvas = document.querySelector<HTMLCanvasElement>('#game')!
+41: audio.onTitle = false
+63: quitToTitle: () => {
+65: audio.onTitle = true
+108: assets.loadStage('boot', f => { fAssets = f; report() }),
+169: if (slowFor > 5 && governorCooldown === 0 && q !== 'low') {
+200: window.setTimeout(() => ui.show('title'), 150)
+204: window.setTimeout(() => assets.prefetch(['coast', 'highlands', 'caldera']), 600)
+206: const firstGesture = () => { audio.unlock(); audio.onTitle = g.mode === 'title'; audio.startMusic() }
+223: document.body.insertAdjacentHTML('beforeend', `<pre style="color:#ffb0a0;position:fixed;inset:auto 0 0 0;padding:12px;background:#000c;white-space:pre-wrap">${String(e?.stack ?? e)}</pre>`)
+-- src/game/game.ts --
+35: banner(title: string, sub: string, kind?: 'region' | 'boss' | 'camp'): void
+180: onError: msg => this.hooks.toast(msg, 'warn'),
+247: this.tip('move', '<b>WASD</b> 移動 · <b>マウス</b> 視点操作 · <b>Shift</b> ダッシュ · <b>E</b> 調べる。<b>目標マーカー</b>を追いましょう。')
+433: this.tip('combat', '<b>左クリック</b> 弱攻撃コンボ · <b>右クリック長押し</b> 溜め強攻撃 · <b>Space</b> 攻撃を回避。赤い範囲が攻撃地点です。攻撃後の隙を狙いましょう！')
+435: this.tip('lock', '<b>Q</b>（またはマウス中ボタン）でロックオンし、獣を画面に捉え続けます。')
+471: if (!p.tips.includes('carve')) this.tip('carve', '獣の死骸のそばで<b>E</b>を押すと素材を剥ぎ取れます。1回の狩猟で複数回剥ぎ取れます。')
+480: this.tip('feed', `A feeding predator is distracted: strike it now for a <b>sneak attack (+50%)</b>. The carcass can be scavenged with <b>E</b>.`)
+488: this.tip('ecology', '<b>${c.def.name}</b>が<b>${e.prey.def.name}</b>を狩っています。仕留めるまで待ち、食事中に奇襲しましょう。')
+525: private onPlayerHit(c: Creature, r: ReturnType<Creature['takeHit']>, point: THREE.Vector3, heavy: boolean): void {
+588: const name = ITEMS[g].name
+611: }, () => this.gadgetInterrupted(name, P.pos.x, P.pos.z, 'throw'))
+622: if (g === 'pitfall' && this.gadgets.traps.some(t => t.kind === 'pitfall' && t.sprung <= 0)) {
+634: }, () => this.gadgetInterrupted(name, x, z, 'set'))
+639: private gadgetInterrupted(name: string, x: number, z: number, how: 'set' | 'throw'): void {
+720: if (this.heat > 0.05 && P.alive && !P.stats.heatProof && this.mode === 'playing') {
+725: if (P.alive && P.hp < P.maxHp * 0.45 && (this.progress.inv.poultice ?? 0) > 0) this.tip('heal', '体力が少ない！<b>R</b>でメンドリーフの薬草包帯を使いましょう。キャンプで追加作成できます。')
+888: this.hooks.toast(`まずキャンプで${HELD_NAMES[h as Exclude<HeldId, 'weapon'>] ?? '道具'}を作成してください。`, 'warn')
+902: this.hooks.popup(h === 'weapon' ? GEAR[this.progress.weapon].name : HELD_NAMES[h], P.pos.clone().setY(P.pos.y + 2.3), 'info')
+915: const names: Record<string, string> = { palm0: 'ヤシの木', palm1: 'ヤシの木', palm2: 'ヤシの木', jungle0: '樹冠の木', jungle1: '樹冠の木', jungle2: '樹冠の木', acacia0: 'トゲの木', acacia1: 'トゲの木', deadtree: '枯れ木', rockC: '巨岩', rockH: '砂岩の巨岩', rockK: '玄武岩の巨岩' }
+922: ? `<b>${HELD_NAMES[best]}</b>を装備（<b>${HELD_ORDER.indexOf(best) + 1}</b>）すると、${r.kind === 'tree' ? '木を切る' : '岩を砕く'}速度が大幅に上がります。`
+923: : `どの武器でも${r.kind === 'tree' ? '木を切れます' : '岩を砕けます'}が、キャンプの作業台で作れる<b>${HELD_NAMES[best]}</b>ならずっと速く作業できます。`)
+1051: this.interactFn = () => this.openMenu('camp')
+1059: this.interactFn = blocked ? () => this.hooks.toast('採掘するにはキャンプの作業台で火打石のツルハシを作ってください。', 'warn') : () => this.gather(n)
+1060: if (!this.progress.tips.includes('gather')) this.tip('gather', '光るものから素材を採集できます。<b>E</b>で拾いましょう。')
+1247: else col.set(T.heatAt(x, z) > 0.2 ? '#4a3a36' : '#6d5d55')
+-- src/game/data.ts --
+20: export type ItemDef = { id: ItemId; name: string; desc: string; kind: ItemKind; icon: IconId; color: string }
+22: const item = (id: ItemId, name: string, kind: ItemKind, icon: IconId, color: string, desc: string): ItemDef => ({ id, name, kind, icon, color, desc })
+80: export type MealDef = { id: MealId; name: string; stage: 1 | 2; cost: Partial<Record<ItemId, number>>; buff: MealBuff; desc: string }
+82: heartyHaunch: { id: 'heartyHaunch', name: '肉厚ステーキ', stage: 1, cost: { meat: 2 }, buff: { hp: 25 }, desc: '最大体力+25' },
+83: trailStew: { id: 'trailStew', name: '旅人のシチュー', stage: 1, cost: { meat: 1, herb: 2 }, buff: { stamina: 30, staRegen: 0.2 }, desc: '最大スタミナ+30、スタミナ回復+20%' },
+84: snapperBroth: { id: 'snapperBroth', name: 'スナッパーのスープ', stage: 1, cost: { meat: 1, snapperScale: 1, herb: 1 }, buff: { dodgeCost: 0.25, defense: 0.08 }, desc: '回避のスタミナ消費-25%、防御力+8%' },
+85: brimstoneSkewer: { id: 'brimstoneSkewer', name: '硫黄焼き', stage: 2, cost: { meat: 1, sulfur: 1 }, buff: { attack: 0.12, heatSlow: 0.6 }, desc: '攻撃力+12%、火口の熱による消耗が60%減少' },
+104: id: GearId; name: string; slot: GearSlot; tier: number; desc: string
+109: export type ClassDef = { name: string; speed: number; motion: number; reach: number; arc: number; desc: string }
+111: club: { name: '棍棒', speed: 1.15, motion: 1, reach: 0, arc: 1, desc: '扱いやすく素早い。3連撃と溜め強打が使える。' },
+112: maul: { name: '大槌', speed: 0.85, motion: 1.3, reach: 0.2, arc: 1.1, desc: '遅いが強烈。最大まで溜めると必ず体勢を崩す。' },
+113: spear: { name: '槍', speed: 1, motion: 0.95, reach: 1.6, arc: 0.45, desc: '間合いの長い突きと踏み込み攻撃。完璧な回避直後の攻撃で反撃の突きを放つ。' },
+114: sling: { name: '投石器', speed: 1, motion: 0.8, reach: 0, arc: 1, desc: '石を投げて遠距離攻撃（石1個消費）。強攻撃を長押しして溜め撃ち。' },
+122: club: { id: 'club', name: '節付き棍棒', slot: 'weapon', tier: 0, attack: 12, cls: 'club', desc: '硬木の節を活かした頼れる棍棒。' },
+123: flintMaul: { id: 'flintMaul', name: '火打ち石の大槌', slot: 'weapon', tier: 1, attack: 19, cls: 'maul', desc: '重い柄に火打ち石の頭を固定した大槌。' },
+124: amberHammer: { id: 'amberHammer', name: '琥珀牙のハンマー', slot: 'weapon', tier: 2, attack: 29, cls: 'maul', desc: '牙の間に輝く琥珀を据えたハンマー。' },
+125: obsidianClub: { id: 'obsidianClub', name: '黒曜石の大棍棒', slot: 'weapon', tier: 3, attack: 44, cls: 'club', desc: '角の芯に火山ガラスの棘を備えた大棍棒。' },
+126: boneSpear: { id: 'boneSpear', name: '骨の槍', slot: 'weapon', tier: 1, attack: 17, cls: 'spear', desc: '火打ち石の穂先を付けた骨の柄。長い間合いから反撃の突きを繰り出す。' },
+127: stalkerLance: { id: 'stalkerLance', name: 'ストーカーランス', slot: 'weapon', tier: 2, attack: 27, cls: 'spear', desc: '柄にデューンストーカーの爪を固定した槍。' },
+128: reedSling: { id: 'reedSling', name: '葦の投石器', slot: 'weapon', tier: 1, attack: 12, cls: 'sling', desc: '編んだ葦と毛皮で作られている。18m先まで石を飛ばす。' },
+129: sinewSling: { id: 'sinewSling', name: 'ストーカーの腱の投石器', slot: 'weapon', tier: 2, attack: 19, cls: 'sling', desc: '骨の握りに腱を張った投石器。威力の高い弾を放つ。' },
+130: leafWraps: { id: 'leafWraps', name: '葉の装備', slot: 'armor', tier: 0, defense: 0, hp: 0, desc: 'ほとんど葉っぱ。' },
+131: hideGarb: { id: 'hideGarb', name: '剛毛皮の服', slot: 'armor', tier: 1, defense: 0.15, hp: 15, desc: '毛皮と鱗で作ったチュニック。' },
+132: stalkerPlate: { id: 'stalkerPlate', name: 'ストーカーの骨鎧', slot: 'armor', tier: 2, defense: 0.27, hp: 30, desc: '縞模様の毛皮に骨板を重ねた鎧。' },
+133: ashguardMantle: { id: 'ashguardMantle', name: '灰守りのマント', slot: 'armor', tier: 3, defense: 0.38, hp: 45, heatProof: true, desc: '灰毛皮の下にルインホーンの甲板を備える。火口の熱を防ぐ。' },
+134: boneKnife: { id: 'boneKnife', name: '骨の解体ナイフ', slot: 'tool', tier: 1, desc: '狩りのたびに追加で素材を切り出せる。' },
+135: flintHatchet: { id: 'flintHatchet', name: '火打ち石の手斧', slot: 'tool', tier: 1, attack: 9, desc: '数回の攻撃で木を倒せる。2キーで装備。' },
+136: flintPick: { id: 'flintPick', name: '火打ち石のつるはし', slot: 'tool', tier: 1, attack: 10, desc: '岩を素早く砕き、琥珀石や黒曜石を採掘できる。3キーで装備。' },
+144: export const HELD_NAMES: Record<Exclude<HeldId, 'weapon'>, string> = { flintHatchet: '火打ち石の手斧', flintPick: '火打ち石のつるはし', hands: '素手' }
+149: export type ResourceDef = { kind: ResourceKind; name: string; hp: number; yields: [ItemId, number, number]; bonus?: [ItemId, number] }
+152: tree: { kind: 'tree', name: '木', hp: 6, yields: ['wood', 3, 5] },
+153: rock: { kind: 'rock', name: '大岩', hp: 7, yields: ['stone', 2, 4], bonus: ['flint', 0.6] },
+190: export const CAMP_STAGES: { stage: 1 | 2 | 3; name: string; desc: string; cost: Cost }[] = [
+191: { stage: 1, name: '焚き火の野営地', desc: '焚き火に火を戻し、簡易小屋を建てる。基本のクラフトと休息が解放される。', cost: { wood: 6, stone: 5, fiber: 4 } },
+192: { stage: 2, name: '柵の野営地', desc: '柵を立て、毛皮のテントと作業台を設置する。ティアII装備が解放される。', cost: { wood: 12, stone: 8, bone: 6, roughHide: 3, snapperScale: 2 } },
+193: { stage: 3, name: '石の砦', desc: '石窯を作り、塔の基礎を壁で囲む。ティアIII装備と塔が解放される。', cost: { stone: 12, amber: 6, stalkerClaw: 3, ruinPlate: 2 } },
+219: id: string; name: string; desc: string; anim: AnimId
+235: id: SpeciesId; name: string; title: string; region: RegionId; boss: boolean
+244: lore: string
+250: habitat: string
+263: id: 'tuskhog', name: 'タスクホッグ', title: '剛毛を逆立てたジャングルイノシシ', region: 'coast', boss: false,
+265: habitat: '密林海岸のヤシ林や森の縁を掘り返す。デューンストーカーに狙われ、海辺ではマッドスナッパーに待ち伏せされる。',
+268: lore: '縄張り意識が強く、視野は狭い。突進前に地面を前脚でかく。横へ避け、滑って隙を見せたところを狙おう。',
+270: atk({ id: 'gore', name: '牙の振り上げ', desc: '正面に牙を素早く振り上げる。', anim: 'gore', range: [0, 3.2], windup: 0.55, active: 0.18, recovery: 0.75, damage: 14, knock: 'flinch', shape: { kind: 'cone', radius: 3.2, angle: 80 }, weight: 3, cooldown: 0.4, tracking: 0.6 }),
+271: atk({ id: 'charge', name: '剛毛突進', desc: '頭を下げ、一直線に突進する。', anim: 'charge', range: [5, 14], windup: 0.9, active: 0.9, recovery: 1.2, damage: 20, knock: 'down', shape: { kind: 'lane', length: 14, width: 2.6 }, weight: 2, cooldown: 3, tracking: 0.7 }),
+276: id: 'mudsnapper', name: 'マッドスナッパー', title: '水辺に潜む待ち伏せトカゲ', region: 'coast', boss: false,
+278: habitat: '潮際の湿った砂に半ば埋もれて潜み、水辺へ近づいたタスクホッグを待ち伏せする。',
+281: lore: '潮際に潜み、素早く飛びかかるが、噛みつきの途中で向きを変えられない。側面に回る相手には尻尾で反撃する。',
+283: atk({ id: 'lunge', name: '噛みつき突進', desc: '顎を開いて素早く飛びかかる。', anim: 'bite', range: [2, 6.5], windup: 0.5, active: 0.28, recovery: 0.85, damage: 13, knock: 'flinch', shape: { kind: 'lane', length: 6.5, width: 1.9 }, weight: 3, cooldown: 0.8, tracking: 0.65 }),
+284: atk({ id: 'tail', name: '尻尾払い', desc: '後方へ尻尾を振り回す。', anim: 'tail', range: [0, 3.6], windup: 0.45, active: 0.16, recovery: 0.6, damage: 10, knock: 'flinch', shape: { kind: 'cone', radius: 3.6, angle: 130, back: true }, weight: 4, cooldown: 1, tracking: 0, behind: true }),
+289: id: 'dunestalker', name: 'デューンストーカー', title: '群れで狩る砂漠のラプトル', region: 'highlands', boss: false,
+291: habitat: '高地の琥珀色の草地を小さな群れで歩き回り、タスクホッグを狙う一方、アッシュファングからは逃げる。',
+294: lore: '二、三体の群れで狩りをする。跳びかかる前に身を低くするので、離れるのではなく着地へ向かって転がって避けよう。',
+296: atk({ id: 'pounce', name: '飛びかかり', desc: '身を低くした後、プレイヤーの位置へ飛びかかる。', anim: 'pounce', range: [5, 12], windup: 0.75, active: 0.6, recovery: 0.95, damage: 18, knock: 'down', shape: { kind: 'leap', radius: 2.7, range: 12 }, weight: 3, cooldown: 2.5, tracking: 0.7 }),
+297: atk({ id: 'rake', name: '爪の一閃', desc: '前脚の爪で大きく切り裂く。', anim: 'claw', range: [0, 3.2], windup: 0.4, active: 0.14, recovery: 0.55, damage: 12, knock: 'flinch', shape: { kind: 'cone', radius: 3.2, angle: 100 }, weight: 3, cooldown: 0.5, tracking: 0.6 }),
+302: id: 'emberbeetle', name: 'エンバービートル', title: 'マグマを吐く装甲甲虫', region: 'caldera', boss: false,
+304: habitat: 'カルデラの溶岩噴出口近く、温かな黒曜石の上を這い回り、硫黄の地殻を食べる。',
+307: lore: 'マグマを吐く前には甲殻が光る。距離を詰めよう。追い詰めると転がって攻撃し、その後は仰向けになる。',
+309: atk({ id: 'spit', name: 'マグマ吐き', desc: 'プレイヤーの位置へマグマの塊を吐きつける。', anim: 'spit', range: [5, 18], windup: 0.8, active: 0.3, recovery: 0.9, damage: 16, knock: 'flinch', shape: { kind: 'spit', radius: 2.4, count: 1, spread: 0, speed: 15 }, weight: 3, cooldown: 1.6, tracking: 0.8 }),
+310: atk({ id: 'roll', name: '火の粉転がり', desc: '丸まり、一直線に転がる。', anim: 'roll', range: [2, 10], windup: 1.0, active: 1.0, recovery: 1.4, damage: 22, knock: 'down', shape: { kind: 'lane', length: 12, width: 2.9 }, weight: 2, cooldown: 3, tracking: 0.6 }),
+315: id: 'ashfang', name: 'アッシュファング', title: '灰のたてがみを持つ猟犬', region: 'caldera', boss: false,
+317: habitat: '高地とカルデラの境に広がる灰の斜面を狩場にする。高原からデューンストーカーを追い詰める。',
+320: lore: '炎をまとって突進する前に、たてがみが燃え上がる。横へ回避し、滑って止まった隙に側面を攻めよう。',
+322: atk({ id: 'dash', name: '炎の突進', desc: '炎をまとって駆け抜ける。', anim: 'charge', range: [4, 12], windup: 0.7, active: 0.55, recovery: 1.05, damage: 18, knock: 'down', shape: { kind: 'lane', length: 13, width: 2.3 }, weight: 3, cooldown: 2.2, tracking: 0.7 }),
+323: atk({ id: 'bite', name: '灼熱の噛みつき', desc: '正面に噛みつく。', anim: 'bite', range: [0, 3], windup: 0.42, active: 0.15, recovery: 0.55, damage: 13, knock: 'flinch', shape: { kind: 'cone', radius: 3, angle: 70 }, weight: 3, cooldown: 0.4, tracking: 0.6 }),
+328: id: 'ruinhorn', name: 'ルインホーン', title: '沈んだ遺跡の暴君', region: 'highlands', boss: true,
+330: habitat: '高地の坂を上った先にある沈んだ遺跡を守る。三本指の足跡が石畳を砕く。',
+333: lore: '石のような皮膚を持つ巨獣で、遺跡を守る。突進後は長く滑る。地震攻撃には欲張らず、余裕をもって退こう。',
+335: atk({ id: 'sweep', name: '角の薙ぎ払い', desc: '巨大な角を大きく振り払う。', anim: 'gore', range: [0, 7], windup: 0.8, active: 0.22, recovery: 0.95, damage: 24, knock: 'down', shape: { kind: 'cone', radius: 7.2, angle: 140 }, weight: 3, cooldown: 0.8, tracking: 0.55 }),
+336: atk({ id: 'rampage', name: '猛進突撃', desc: '長い距離を轟音とともに突進し、滑りながら停止する。', anim: 'charge', range: [8, 30], windup: 1.1, active: 1.5, recovery: 1.9, damage: 32, knock: 'down', shape: { kind: 'lane', length: 30, width: 5.2 }, weight: 3, cooldown: 4, tracking: 0.75 }),
+337: atk({ id: 'quake', name: '地震踏み', desc: '立ち上がって周囲の地面を揺らす。', anim: 'stomp', range: [0, 7.5], windup: 1.25, active: 0.2, recovery: 1.15, damage: 26, knock: 'down', shape: { kind: 'circle', radius: 8.6, forward: 0 }, weight: 2, cooldown: 5, tracking: 0 }),
+338: atk({ id: 'kick', name: '後ろ蹴り', desc: '後ろにいる相手を蹴り飛ばす。', anim: 'kick', range: [0, 6], windup: 0.5, active: 0.15, recovery: 0.75, damage: 18, knock: 'flinch', shape: { kind: 'cone', radius: 5.8, angle: 110, back: true }, weight: 5, cooldown: 1.5, tracking: 0, behind: true }),
+339: atk({ id: 'boulders', name: '瓦礫投げ', desc: '怒り状態で遺跡の瓦礫を投げつける。', anim: 'toss', range: [9, 30], windup: 1.1, active: 0.3, recovery: 1.0, damage: 22, knock: 'down', shape: { kind: 'spit', radius: 3.4, count: 3, spread: 6, speed: 20 }, weight: 3, cooldown: 5, tracking: 0.8, enragedOnl
+345: id: 'vulkarr', name: 'ヴァルカー', title: '燃え盛る火口の大蛇', region: 'caldera', boss: true,
+347: habitat: 'ブリーチ渓谷を越えた先、シンダー火口の奥深くに巣を作る。歩いた跡の地面は焦げつく。',
+350: lore: '山の心臓とも呼べる存在。炎の息を吐く前には喉が輝き、噴火は予兆を伴う。立ち止まらず動き続けよう.',
+352: atk({ id: 'breath', name: '火炎ブレス', desc: '正面に長い炎を吐く。', anim: 'breath', range: [4, 15], windup: 1.0, active: 1.1, recovery: 1.25, damage: 28, knock: 'down', shape: { kind: 'cone', radius: 15, angle: 48 }, weight: 3, cooldown: 3, tracking: 0.7 }),
+353: atk({ id: 'spin', name: '尻尾の旋風', desc: '尻尾を伸ばして回転する。', anim: 'spin', range: [0, 7], windup: 0.75, active: 0.4, recovery: 1.05, damage: 24, knock: 'down', shape: { kind: 'circle', radius: 7.8, forward: 0 }, weight: 3, cooldown: 2, tracking: 0 }),
+354: atk({ id: 'erupt', name: 'マグマ噴出', desc: '咆哮とともに足元の地面を裂く。', anim: 'erupt', range: [0, 30], windup: 1.4, active: 0.3, recovery: 0.85, damage: 26, knock: 'down', shape: { kind: 'burst', radius: 3.4, count: 6, scatter: 9 }, weight: 2, cooldown: 6, tracking: 0.35 }),
+355: atk({ id: 'leap', name: '火口落とし', desc: '飛び上がり、プレイヤーの位置へ叩きつける。', anim: 'slam', range: [9, 22], windup: 0.9, active: 0.9, recovery: 1.6, damage: 34, knock: 'down', shape: { kind: 'leap', radius: 6.6, range: 22 }, weight: 2, cooldown: 5, tracking: 0.7 }),
+356: atk({ id: 'fireballs', name: '火の粉連射', desc: '怒り状態で火球を3発吐く。', anim: 'spit', range: [8, 26], windup: 0.9, active: 0.3, recovery: 0.75, damage: 20, knock: 'down', shape: { kind: 'spit', radius: 3, count: 3, spread: 5, speed: 22 }, weight: 3, cooldown: 4, tracking: 0.8, enragedOnly: 
+393: export type NodeDef = { kind: NodeKind; name: string; verb: string; yields: [ItemId, number, number][]; bonus?: [ItemId, number]; needsPick?: boolean }
+395: fiber: { kind: 'fiber', name: '葦草', verb: '刈る', yields: [['fiber', 2, 3]] },
+396: bone: { kind: 'bone', name: '骨の山', verb: '拾う', yields: [['bone', 2, 2]] },
+397: herb: { kind: 'herb', name: '癒やし草', verb: '採取', yields: [['herb', 2, 2]] },
+398: amber: { kind: 'amber', name: '琥珀石の鉱脈', verb: '採掘', yields: [['amber', 1, 2]], needsPick: true },
+399: obsidian: { kind: 'obsidian', name: '黒曜石の欠片', verb: '採掘', yields: [['obsidian', 1, 2]], needsPick: true },
+400: sulfur: { kind: 'sulfur', name: '硫黄の結晶', verb: '砕く', yields: [['sulfur', 1, 2]] },
+401: glowcap: { kind: 'glowcap', name: '光るキノコの群生', verb: '採取', yields: [['glowcap', 1, 2]] },
+-- src/lab.ts --
+60: const esc = (s: string) => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!)
+67: const shapeKinds: Record<string, string> = { burst: '爆発', circle: '円形', cone: '円錐', lane: '直線突進', leap: '跳躍攻撃', spit: '吐出攻撃' }
+82: const zoneLabels: Record<string, string> = { head: '頭', rear: '後方', flank: '側面' }
+83: const printLabels: Record<string, string> = { giant: '巨大', hoof: '蹄', insect: '昆虫', paw: '肉球', talon: '鉤爪', webbed: '水かき', wyrm: '龍型' }
+84: const knockLabels: Record<string, string> = { flinch: 'ひるみ', down: '転倒' }
+87: const parts = Object.entries(s).filter(([k]) => k !== 'kind').map(([k, v]) => `${shapeLabels[k] ?? k} ${typeof v === 'number' ? +v.toFixed(2) : String(v)}`)
+92: document.title = '原始の夜明け：野生との戦い｜敵研究室'
+97: root.innerHTML = `
+100: <nav class="species">${ids.map(id => `<button data-sp="${id}"><b>${esc(SPECIES[id].name)}</b><small>${SPECIES[id].boss ? '<em>頂点捕食者</em> · ' : ''}${esc(REGION_NAMES[SPECIES[id].region])}</small></button>`).join('')}</nav>
+111: <label class="range">ダミーとの距離 <input type="range" min="1" max="30" step="0.5" value="8" data-opt="dist"><output data-el="distOut">8 m</output></label>
+129: const el = (k: string) => root.querySelector<HTMLElement>(`[data-el="${k}"]`)!
+142: const controls = new OrbitControls(camera, canvas)
+180: d.className = `l-${kind}`
+181: d.textContent = `${(performance.now() / 1000).toFixed(1)}秒  ${s}`
+192: emit: e => log(`イベント：${eventLabels[e.type] ?? e.type}`, e.type === 'killed' ? 'hit' : 'info'),
+217: el('yawOut').textContent = '0°'
+219: for (const b of root.querySelectorAll<HTMLElement>('[data-sp]')) b.classList.toggle('on', b.dataset.sp === id)
+221: el('name').textContent = d.name
+222: el('title').innerHTML = `${esc(d.title)} · ${esc(REGION_NAMES[d.region])}${d.boss ? ' · <em>頂点捕食者</em>' : ''}`
+223: el('stats').innerHTML = [
+225: ['体半径', `${d.radius} m`], ['体高', `${d.height} m`], ['感知範囲', `${d.aggro} m`], ['追跡限界', `${d.leash} m`], ['剥ぎ取り回数', d.carves], ['弱点', `${d.weak.label}（${zoneLabels[d.weak.zone] ?? d.weak.zone}）×${d.weak.mult}`], ['生息地', d.habitat], ['獲物', d.prey?.length ? d.prey.map(prey => SPECIES
+226: ].map(([k, v]) => `<tr><th>${k}</th><td>${v}</td></tr>`).join('')
+227: el('attacks').innerHTML = d.attacks.map(a => `<div class="atk" data-atk="${a.id}">
+228: <header><b>${esc(a.name)}</b><span class="tags">${a.behind ? '<em>背後攻撃</em>' : ''}${a.enragedOnly ? '<em class="rage">怒り時限定</em>' : ''}<em>${knockLabels[a.knock] ?? a.knock}</em></span>
+229: <button data-play="${a.id}">再生</button><button data-loop="${a.id}" title="繰り返し">ループ</button></header>
+230: <p>${esc(a.desc)}</p>
+232: <table class="kv sm"><tr><th>予備動作 / 攻撃 / 硬直</th><td>${a.windup}s / ${a.active}s / ${a.recovery}s</td></tr>
+233: <tr><th>ダメージ</th><td>${a.damage}</td></tr><tr><th>範囲形状</th><td>${esc(shapeText(a))}</td></tr>
+234: <tr><th>射程 · 再使用時間</th><td>${a.range[0]}–${a.range[1]} m · ${a.cooldown}s</td></tr><tr><th>動き · 追尾強度</th><td>${animLabels[a.anim] ?? a.anim} · ${a.tracking > 0 ? a.tracking.toFixed(2) : 'なし'}</td></tr></table></div>`).join('')
+235: el('drops').innerHTML = d.bossCarves
+236: ? `<ol class="drops">${d.bossCarves.map(cv => `<li>${Object.entries(cv).map(([k, n]) => `${n}× ${esc(ITEMS[k as keyof typeof ITEMS].name)}`).join(', ')}</li>`).join('')}</ol>`
+239: return `<ul class="drops">${d.drops.map(dr => `<li>${esc(ITEMS[dr.item].name)} <small>(${Math.round((dr.weight / total) * 100)}% 剥ぎ取りごと)</small></li>`).join('')}</ul>`
+241: el('lore').textContent = d.lore
+242: el('actions').innerHTML = `
+279: const sp = t.closest<HTMLElement>('[data-sp]')
+281: const pl = t.closest<HTMLElement>('[data-play]')
+286: const lp = t.closest<HTMLElement>('[data-loop]')
+289: for (const b of root.querySelectorAll<HTMLElement>('[data-loop]')) b.classList.toggle('on', b.dataset.loop === loopAttack)
+293: const act = t.closest<HTMLElement>('[data-act]')?.dataset.act
+324: el('yawOut').textContent = `${yawDeg}°`
+328: el('distOut').textContent = `${t.value} m`
+331: el('speedOut').textContent = `${t.value}×`
+402: el('xform').innerHTML = [
+410: ].map(([k, v]) => `<tr><th>${k}</th><td>${v}</td></tr>`).join('')
+412: el('stateName').textContent = `${stateLabels[c.state] ?? c.state}${c.enraged ? ' · 怒り' : ''}${c.open ? ' · 隙あり' : ''}`
+413: el('stateName').className = c.open ? 'open' : c.state === 'windup' ? 'wind' : c.state === 'active' ? 'act' : ''
+414: el('stateInfo').textContent = `体力 ${Math.ceil(c.hp)} / ${c.maxHp} · 怯み耐性 ${c.poise.toFixed(0)} / ${c.poiseMax}${a ? ` · ${a.name}` : ''}`
+-- HTML user-visible words remaining in data fields --
+20:export type ItemDef = { id: ItemId; name: string; desc: string; kind: ItemKind; icon: IconId; color: string }
+22:const item = (id: ItemId, name: string, kind: ItemKind, icon: IconId, color: string, desc: string): ItemDef => ({ id, name, kind, icon, color, desc })
+80:export type MealDef = { id: MealId; name: string; stage: 1 | 2; cost: Partial<Record<ItemId, number>>; buff: MealBuff; desc: string }
+82:  heartyHaunch: { id: 'heartyHaunch', name: '肉厚ステーキ', stage: 1, cost: { meat: 2 }, buff: { hp: 25 }, desc: '最大体力+25' },
+83:  trailStew: { id: 'trailStew', name: '旅人のシチュー', stage: 1, cost: { meat: 1, herb: 2 }, buff: { stamina: 30, staRegen: 0.2 }, desc: '最大スタミナ+30、スタミナ回復+20%' },
+84:  snapperBroth: { id: 'snapperBroth', name: 'スナッパーのスープ', stage: 1, cost: { meat: 1, snapperScale: 1, herb: 1 }, buff: { dodgeCost: 0.25, defense: 0.08 }, desc: '回避のスタミナ消費-25%、防御力+8%' },
+85:  brimstoneSkewer: { id: 'brimstoneSkewer', name: '硫黄焼き', stage: 2, cost: { meat: 1, sulfur: 1 }, buff: { attack: 0.12, heatSlow: 0.6 }, desc: '攻撃力+12%、火口の熱による消耗が60%減少' },
+104:  id: GearId; name: string; slot: GearSlot; tier: number; desc: string
+109:export type ClassDef = { name: string; speed: number; motion: number; reach: number; arc: number; desc: string }
+111:  club: { name: '棍棒', speed: 1.15, motion: 1, reach: 0, arc: 1, desc: '扱いやすく素早い。3連撃と溜め強打が使える。' },
+112:  maul: { name: '大槌', speed: 0.85, motion: 1.3, reach: 0.2, arc: 1.1, desc: '遅いが強烈。最大まで溜めると必ず体勢を崩す。' },
+113:  spear: { name: '槍', speed: 1, motion: 0.95, reach: 1.6, arc: 0.45, desc: '間合いの長い突きと踏み込み攻撃。完璧な回避直後の攻撃で反撃の突きを放つ。' },
+114:  sling: { name: '投石器', speed: 1, motion: 0.8, reach: 0, arc: 1, desc: '石を投げて遠距離攻撃（石1個消費）。強攻撃を長押しして溜め撃ち。' },
+122:  club: { id: 'club', name: '節付き棍棒', slot: 'weapon', tier: 0, attack: 12, cls: 'club', desc: '硬木の節を活かした頼れる棍棒。' },
+123:  flintMaul: { id: 'flintMaul', name: '火打ち石の大槌', slot: 'weapon', tier: 1, attack: 19, cls: 'maul', desc: '重い柄に火打ち石の頭を固定した大槌。' },
+124:  amberHammer: { id: 'amberHammer', name: '琥珀牙のハンマー', slot: 'weapon', tier: 2, attack: 29, cls: 'maul', desc: '牙の間に輝く琥珀を据えたハンマー。' },
+125:  obsidianClub: { id: 'obsidianClub', name: '黒曜石の大棍棒', slot: 'weapon', tier: 3, attack: 44, cls: 'club', desc: '角の芯に火山ガラスの棘を備えた大棍棒。' },
+126:  boneSpear: { id: 'boneSpear', name: '骨の槍', slot: 'weapon', tier: 1, attack: 17, cls: 'spear', desc: '火打ち石の穂先を付けた骨の柄。長い間合いから反撃の突きを繰り出す。' },
+127:  stalkerLance: { id: 'stalkerLance', name: 'ストーカーランス', slot: 'weapon', tier: 2, attack: 27, cls: 'spear', desc: '柄にデューンストーカーの爪を固定した槍。' },
+128:  reedSling: { id: 'reedSling', name: '葦の投石器', slot: 'weapon', tier: 1, attack: 12, cls: 'sling', desc: '編んだ葦と毛皮で作られている。18m先まで石を飛ばす。' },
+129:  sinewSling: { id: 'sinewSling', name: 'ストーカーの腱の投石器', slot: 'weapon', tier: 2, attack: 19, cls: 'sling', desc: '骨の握りに腱を張った投石器。威力の高い弾を放つ。' },
+130:  leafWraps: { id: 'leafWraps', name: '葉の装備', slot: 'armor', tier: 0, defense: 0, hp: 0, desc: 'ほとんど葉っぱ。' },
+131:  hideGarb: { id: 'hideGarb', name: '剛毛皮の服', slot: 'armor', tier: 1, defense: 0.15, hp: 15, desc: '毛皮と鱗で作ったチュニック。' },
+132:  stalkerPlate: { id: 'stalkerPlate', name: 'ストーカーの骨鎧', slot: 'armor', tier: 2, defense: 0.27, hp: 30, desc: '縞模様の毛皮に骨板を重ねた鎧。' },
+133:  ashguardMantle: { id: 'ashguardMantle', name: '灰守りのマント', slot: 'armor', tier: 3, defense: 0.38, hp: 45, heatProof: true, desc: '灰毛皮の下にルインホーンの甲板を備える。火口の熱を防ぐ。' },
+134:  boneKnife: { id: 'boneKnife', name: '骨の解体ナイフ', slot: 'tool', tier: 1, desc: '狩りのたびに追加で素材を切り出せる。' },
+135:  flintHatchet: { id: 'flintHatchet', name: '火打ち石の手斧', slot: 'tool', tier: 1, attack: 9, desc: '数回の攻撃で木を倒せる。2キーで装備。' },
+136:  flintPick: { id: 'flintPick', name: '火打ち石のつるはし', slot: 'tool', tier: 1, attack: 10, desc: '岩を素早く砕き、琥珀石や黒曜石を採掘できる。3キーで装備。' },
+149:export type ResourceDef = { kind: ResourceKind; name: string; hp: number; yields: [ItemId, number, number]; bonus?: [ItemId, number] }
+152:  tree: { kind: 'tree', name: '木', hp: 6, yields: ['wood', 3, 5] },
+153:  rock: { kind: 'rock', name: '大岩', hp: 7, yields: ['stone', 2, 4], bonus: ['flint', 0.6] },
+190:export const CAMP_STAGES: { stage: 1 | 2 | 3; name: string; desc: string; cost: Cost }[] = [
+191:  { stage: 1, name: '焚き火の野営地', desc: '焚き火に火を戻し、簡易小屋を建てる。基本のクラフトと休息が解放される。', cost: { wood: 6, stone: 5, fiber: 4 } },
+192:  { stage: 2, name: '柵の野営地', desc: '柵を立て、毛皮のテントと作業台を設置する。ティアII装備が解放される。', cost: { wood: 12, stone: 8, bone: 6, roughHide: 3, snapperScale: 2 } },
+193:  { stage: 3, name: '石の砦', desc: '石窯を作り、塔の基礎を壁で囲む。ティアIII装備と塔が解放される。', cost: { stone: 12, amber: 6, stalkerClaw: 3, ruinPlate: 2 } },
+219:  id: string; name: string; desc: string; anim: AnimId
+235:  id: SpeciesId; name: string; title: string; region: RegionId; boss: boolean
+244:  lore: string
+250:  habitat: string
+263:    id: 'tuskhog', name: 'タスクホッグ', title: '剛毛を逆立てたジャングルイノシシ', region: 'coast', boss: false,
+265:    habitat: '密林海岸のヤシ林や森の縁を掘り返す。デューンストーカーに狙われ、海辺ではマッドスナッパーに待ち伏せされる。',
+268:    lore: '縄張り意識が強く、視野は狭い。突進前に地面を前脚でかく。横へ避け、滑って隙を見せたところを狙おう。',
+270:      atk({ id: 'gore', name: '牙の振り上げ', desc: '正面に牙を素早く振り上げる。', anim: 'gore', range: [0, 3.2], windup: 0.55, active: 0.18, recovery: 0.75, damage: 14, knock: 'flinch', shape: { kind: 'cone', radius: 3.2, angle: 80 }, weight: 3, cooldown: 0.4, tracking: 0.6 }),
+271:      atk({ id: 'charge', name: '剛毛突進', desc: '頭を下げ、一直線に突進する。', anim: 'charge', range: [5, 14], windup: 0.9, active: 0.9, recovery: 1.2, damage: 20, knock: 'down', shape: { kind: 'lane', length: 14, width: 2.6 }, weight: 2, cooldown: 3, tracking: 0.7 }),
+276:    id: 'mudsnapper', name: 'マッドスナッパー', title: '水辺に潜む待ち伏せトカゲ', region: 'coast', boss: false,
+278:    habitat: '潮際の湿った砂に半ば埋もれて潜み、水辺へ近づいたタスクホッグを待ち伏せする。',
+281:    lore: '潮際に潜み、素早く飛びかかるが、噛みつきの途中で向きを変えられない。側面に回る相手には尻尾で反撃する。',
+283:      atk({ id: 'lunge', name: '噛みつき突進', desc: '顎を開いて素早く飛びかかる。', anim: 'bite', range: [2, 6.5], windup: 0.5, active: 0.28, recovery: 0.85, damage: 13, knock: 'flinch', shape: { kind: 'lane', length: 6.5, width: 1.9 }, weight: 3, cooldown: 0.8, tracking: 0.65 }),
+284:      atk({ id: 'tail', name: '尻尾払い', desc: '後方へ尻尾を振り回す。', anim: 'tail', range: [0, 3.6], windup: 0.45, active: 0.16, recovery: 0.6, damage: 10, knock: 'flinch', shape: { kind: 'cone', radius: 3.6, angle: 130, back: true }, weight: 4, cooldown: 1, tracking: 0, behind: true }),
+289:    id: 'dunestalker', name: 'デューンストーカー', title: '群れで狩る砂漠のラプトル', region: 'highlands', boss: false,
+291:    habitat: '高地の琥珀色の草地を小さな群れで歩き回り、タスクホッグを狙う一方、アッシュファングからは逃げる。',
+294:    lore: '二、三体の群れで狩りをする。跳びかかる前に身を低くするので、離れるのではなく着地へ向かって転がって避けよう。',
+296:      atk({ id: 'pounce', name: '飛びかかり', desc: '身を低くした後、プレイヤーの位置へ飛びかかる。', anim: 'pounce', range: [5, 12], windup: 0.75, active: 0.6, recovery: 0.95, damage: 18, knock: 'down', shape: { kind: 'leap', radius: 2.7, range: 12 }, weight: 3, cooldown: 2.5, tracking: 0.7 }),
+297:      atk({ id: 'rake', name: '爪の一閃', desc: '前脚の爪で大きく切り裂く。', anim: 'claw', range: [0, 3.2], windup: 0.4, active: 0.14, recovery: 0.55, damage: 12, knock: 'flinch', shape: { kind: 'cone', radius: 3.2, angle: 100 }, weight: 3, cooldown: 0.5, tracking: 0.6 }),
+302:    id: 'emberbeetle', name: 'エンバービートル', title: 'マグマを吐く装甲甲虫', region: 'caldera', boss: false,
+304:    habitat: 'カルデラの溶岩噴出口近く、温かな黒曜石の上を這い回り、硫黄の地殻を食べる。',
+307:    lore: 'マグマを吐く前には甲殻が光る。距離を詰めよう。追い詰めると転がって攻撃し、その後は仰向けになる。',
+309:      atk({ id: 'spit', name: 'マグマ吐き', desc: 'プレイヤーの位置へマグマの塊を吐きつける。', anim: 'spit', range: [5, 18], windup: 0.8, active: 0.3, recovery: 0.9, damage: 16, knock: 'flinch', shape: { kind: 'spit', radius: 2.4, count: 1, spread: 0, speed: 15 }, weight: 3, cooldown: 1.6, tracking: 0.8 }),
+310:      atk({ id: 'roll', name: '火の粉転がり', desc: '丸まり、一直線に転がる。', anim: 'roll', range: [2, 10], windup: 1.0, active: 1.0, recovery: 1.4, damage: 22, knock: 'down', shape: { kind: 'lane', length: 12, width: 2.9 }, weight: 2, cooldown: 3, tracking: 0.6 }),
+315:    id: 'ashfang', name: 'アッシュファング', title: '灰のたてがみを持つ猟犬', region: 'caldera', boss: false,
+[32mubuntu@sandbox:~/savageclash$ [0m

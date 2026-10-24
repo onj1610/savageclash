@@ -1,0 +1,206 @@
+# Terminal Full Output
+# Terminal: clean-build
+# Command: set -e
+TMP=$(mktemp -d /tmp/savageclash-clean.XXXXXX)
+printf '%s\n' "$TMP" > /tmp/savageclash-clean-build-path
+printf 'Clean candidate: %s\n' "$TMP"
+tar -C /home/ubuntu/savageclash -cf - --exclude='./.git' --exclude='./node_modules' --exclude='./dist' --exclude='./shots' --exclude='./assets' --exclude='./.env' --exclude='./.env.*' . | tar -C "$TMP" -xf -
+test ! -e "$TMP/assets" && test ! -e "$TMP/node_modules"
+printf '\n-- clean source status --\n'; test -s "$TMP/assets.lock.json" && echo 'pinned assets.lock.json present'; test -s "$TMP/game-sharing.json" && echo 'game sharing metadata present'
+cd "$TMP"
+printf '\n-- frozen install --\n'; pnpm install --frozen-lockfile
+printf '\n-- clean build (restores registered assets from storage) --\n'; pnpm build
+printf '\n-- clean asset tests --\n'; pnpm test
+printf '\n-- clean production smoke --\n'; pnpm smoke
+# PID: 1153
+# Timestamp: 2026-10-24_11-16-23.533387
+# Original Length: 17415 characters
+# ----------------------------------------
+
+[32mubuntu@sandbox:~$ [0mset -e
+TMP=$(mktemp -d /tmp/savageclash-clean.XXXXXX)
+printf '%s\n' "$TMP" > /tmp/savageclash-clean-build-path
+printf 'Clean candidate: %s\n' "$TMP"
+tar -C /home/ubuntu/savageclash -cf - --exclude='./.git' --exclude='./node_modules' --exclude='./dist' --exclude='./shots' --exclude='./assets' --exclude='./.env' --exclude='./.env.*' . | tar -C "$TMP" -xf -
+test ! -e "$TMP/assets" && test ! -e "$TMP/node_modules"
+printf '\n-- clean source status --\n'; test -s "$TMP/assets.lock.json" && echo 'pinned assets.lock.json present'; test -s "$TMP/game-sharing.json" && echo 'game sharing metadata present'
+cd "$TMP"
+printf '\n-- frozen install --\n'; pnpm install --frozen-lockfile
+printf '\n-- clean build (restores registered assets from storage) --\n'; pnpm build
+printf '\n-- clean asset tests --\n'; pnpm test
+printf '\n-- clean production smoke --\n'; pnpm smoke
+Clean candidate: /tmp/savageclash-clean.c6SYVs
+-- clean source status --
+pinned assets.lock.json present
+game sharing metadata present
+-- frozen install --
+Lockfile is up to date, resolution step is skipped
+[39mPackages: [32m+49
+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+
+[39m[33m[39m[33m   ╭──────────────────────────────────────────╮
+[39m   [33m│[39m                                          [33m│
+[39m   [33m│[39m   Update available! [31m10.18.0[39m → [32m12.15.0[39m.   [33m│
+[39m   [33m│[39m   [35mChangelog:[39m https://pnpm.io/v/12.15.0   [33m│
+[39m   [33m│[39m     To update, run: [35mpnpm self-update[39m     [33m│
+[39m   [33m│[39m                                          [33m│
+[39m[33m   ╰──────────────────────────────────────────╯
+[39mProgress: resolved [96m49[39m, reused [96m49[39m, downloaded [96m0[39m, added [96m49[39m, done
+[96mdependencies:
+[39m[32m+[39m @dimforge/rapier3d-compat [90m0.21.0
+[39m[32m+[39m three [90m0.186.1
+[39m[96mdevDependencies:
+[39m[32m+[39m @types/three [90m0.186.0
+[39m[32m+[39m playwright [90m1.63.0
+[39m[32m+[39m typescript [90m5.9.3
+[39m[32m+[39m vite [90m8.3.1
+[39m[32m+[39m vitest [90m5.0.2
+[39mDone in 957ms using pnpm v10.18.0
+-- clean build (restores registered assets from storage) --
+> savageclash@0.1.0 build /tmp/savageclash-clean.c6SYVs
+> node scripts/manus-game-assets/restore.mjs && node scripts/manus-game-sharing/build.mjs
+> savageclash@0.1.0 manus:build-source /tmp/savageclash-clean.c6SYVs
+> tsc --noEmit && vite build && node scripts/check-size.mjs
+[36mvite v8.3.1 [32mbuilding client environment for production...
+[32m✓[0m 62 modules transformed.
+computing gzip size...
+[2mdist/[0m[32menemies/index.html               [0m[1;2m  0.84 kB[0m[2m │ gzip:   0.46 kB
+[0m[2mdist/[0m[32mindex.html                       [0m[1;2m  0.87 kB[0m[2m │ gzip:   0.57 kB
+[0m[2mdist/[0m[2massets/[0m[35mindex-C5RZ5sem.css        [0m[1;2m  4.01 kB[0m[2m │ gzip:   1.44 kB
+[0m[2mdist/[0m[2massets/[0m[35mindex-CwzmS1Jl.css        [0m[1;2m 43.73 kB[0m[2m │ gzip:  10.97 kB
+[0m[2mdist/[0m[2massets/[0m[36mrenderer-DR0vDeRJ.js      [0m[1;2m 20.84 kB[0m[2m │ gzip:   5.26 kB
+[0m[2mdist/[0m[2massets/[0m[36mindex-CJ6TrtXY.js         [0m[1;2m 35.43 kB[0m[2m │ gzip:  11.73 kB
+[0m[2mdist/[0m[2massets/[0m[36mfx-5EYOg5qI.js            [0m[1;2m 63.18 kB[0m[2m │ gzip:  20.30 kB
+[0m[2mdist/[0m[2massets/[0m[36mindex-B_MPq6_B.js         [0m[1;2m101.65 kB[0m[2m │ gzip:  36.70 kB
+[0m[2mdist/[0m[2massets/[0m[36mgame-CF18jJx0.js          [0m[1;2m144.67 kB[0m[2m │ gzip:  50.12 kB
+[0m[2mdist/[0m[2massets/[0m[36mthree.module-Co71H7_X.js  [0m[1;2m352.33 kB[0m[2m │ gzip:  84.72 kB
+[0m[2mdist/[0m[2massets/[0m[36mterrain-sJnPtCH9.js       [0m[1;2m446.01 kB[0m[2m │ gzip: 124.91 kB
+[0m[32m✓ built in 597ms
+[39mbundle (gzip): js 0.32 MB / fonts 0.00 MB / transfer 0.33 MB
+[sharing] OG image included in the game build
+-- clean asset tests --
+> savageclash@0.1.0 test /tmp/savageclash-clean.c6SYVs
+> vitest run tests/game-assets.test.ts
+[1m[30m[46m RUN [49m[39m[22m [36mv5.0.2 [39m[90m/tmp/savageclash-clean.c6SYVs
+ [32m✓[39m tests/game-assets.test.ts [2m([22m[2m107 tests[22m[2m)[22m[32m 48[2mms
+[22m[39m   [32m✓[39m registered game assets [2m(107)
+[22m     [32m✓[39m boot: /models/hunter-t0.glb resolves to a registered stable URL[32m 4[2mms
+[22m[39m     [32m✓[39m boot: /models/hunter-anims.glb resolves to a registered stable URL[32m 1[2mms
+[22m[39m     [32m✓[39m boot: /models/w-club.glb resolves to a registered stable URL[32m 1[2mms
+[22m[39m     [32m✓[39m boot: /models/tuskhog.glb resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m boot: /vfx/spark.webp resolves to a registered stable URL[32m 1[2mms
+[22m[39m     [32m✓[39m boot: /vfx/smoke.webp resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m boot: /vfx/flame.webp resolves to a registered stable URL[32m 1[2mms
+[22m[39m     [32m✓[39m boot: /vfx/slash.webp resolves to a registered stable URL[32m 1[2mms
+[22m[39m     [32m✓[39m boot: /vfx/crack.webp resolves to a registered stable URL[32m 1[2mms
+[22m[39m     [32m✓[39m boot: /ui/med-heart.webp resolves to a registered stable URL[32m 1[2mms
+[22m[39m     [32m✓[39m boot: /ui/med-stamina.webp resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m boot: /ui/ring-slot.webp resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m boot: /ui/compass-ring.webp resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m boot: /ui/bar-frame.webp resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m boot: /ui/button.webp resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m boot: /ui/banner.webp resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m boot: /ui/reticle.webp resolves to a registered stable URL[32m 3[2mms
+[22m[39m     [32m✓[39m boot: /audio/music/title.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m boot: /models/env/CommonTree_1.glb resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m boot: /models/env/CommonTree_3.glb resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m boot: /models/env/CommonTree_5.glb resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m boot: /models/env/Fern_1.glb resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m boot: /models/env/Plant_1_Big.glb resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m boot: /models/env/Bush_Common_Flowers.glb resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m boot: /audio/sfx/ui_click.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m boot: /audio/sfx/ui_open.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m boot: /audio/sfx/swing_light.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m boot: /audio/sfx/swing_heavy.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m boot: /audio/sfx/hit_light.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m boot: /audio/sfx/hit_heavy.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m boot: /audio/sfx/dodge.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m boot: /audio/sfx/player_hurt.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m boot: /audio/sfx/roar_beast.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m boot: /audio/sfx/steps_grass.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m boot: /audio/sfx/perfect_dodge.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m boot: /audio/sfx/lockon.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m boot: /audio/sfx/telegraph.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m boot: /audio/sfx/slam.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m boot: /audio/sfx/gather_wood.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m boot: /audio/sfx/gather_rock.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m boot: /audio/sfx/chop.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m boot: /audio/sfx/mine.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m coast: /models/mudsnapper.glb resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m coast: /audio/layers/explore_perc.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m coast: /audio/amb/jungle.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m coast: /audio/amb/ocean.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m coast: /audio/amb/camp.mp3 resolves to a registered stable URL[32m 1[2mms
+[22m[39m     [32m✓[39m coast: /audio/music/coast.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m coast: /models/env/Flower_3_Group.glb resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m coast: /models/env/Rock_Medium_1.glb resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m coast: /audio/sfx/gather_plant.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m coast: /audio/sfx/pickup.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m coast: /audio/sfx/carve.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m coast: /audio/sfx/creature_down.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m coast: /audio/sfx/stagger.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m coast: /audio/sfx/heal.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m coast: /audio/sfx/craft.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m coast: /audio/sfx/part_break.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m coast: /audio/sfx/tree_fall.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m coast: /audio/sfx/rock_break.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m coast: /models/w-axe.glb resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m coast: /models/w-pick.glb resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m coast: /audio/sfx/sizzle.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m coast: /audio/sfx/sear_perfect.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m coast: /audio/sfx/eat.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m coast: /audio/sfx/snare.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m coast: /audio/sfx/pitfall.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m coast: /audio/sfx/flash.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m coast: /audio/sfx/sling_whirl.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m coast: /audio/sfx/sling_shot.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m coast: /audio/sfx/clue.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m coast: /audio/sfx/tracked.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m coast: /audio/sfx/page.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m coast: /models/w-spear.glb resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m coast: /models/w-sling.glb resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m highlands: /models/dunestalker.glb resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m highlands: /models/ruinhorn.glb resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m highlands: /models/w-maul.glb resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m highlands: /models/hunter-t1.glb resolves to a registered stable URL[32m 2[2mms
+[22m[39m     [32m✓[39m highlands: /models/env/TwistedTree_1.glb resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m highlands: /models/env/TwistedTree_3.glb resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m highlands: /models/env/Rock_Medium_2.glb resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m highlands: /audio/layers/hunt_drums.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m highlands: /audio/layers/boss_drums.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m highlands: /audio/amb/highlands.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m highlands: /audio/music/highlands.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m highlands: /audio/sfx/roar_boss.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m highlands: /audio/sfx/camp_upgrade.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m highlands: /audio/sfx/faint.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m highlands: /audio/sfx/heartbeat.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m highlands: /audio/sfx/steps_stone.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m caldera: /models/emberbeetle.glb resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m caldera: /models/ashfang.glb resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m caldera: /models/vulkarr.glb resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m caldera: /models/env/DeadTree_1.glb resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m caldera: /models/w-amber.glb resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m caldera: /models/w-obsidian.glb resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m caldera: /models/hunter-t2.glb resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m caldera: /models/hunter-t3.glb resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m caldera: /audio/amb/caldera.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m caldera: /audio/music/caldera.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m caldera: /audio/music/victory.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m caldera: /audio/sfx/fire_launch.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m caldera: /audio/sfx/fire_impact.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m caldera: /audio/sfx/signal_ignite.mp3 resolves to a registered stable URL[32m 0[2mms
+[22m[39m     [32m✓[39m resolves UI, Japanese font and favicon assets used outside the stage table[32m 1[2mms
+[22m[39m     [32m✓[39m rejects paths that are not registered[32m 2[2mms
+[22m[39m[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)
+[39m[2m      Tests [22m [1m[32m107 passed[39m[22m[90m (107)
+[39m[2m   Start at [22m 11:14:21
+[2m   Duration [22m 522ms[2m (transform 53%, import 24%, tests 19%, worker 4%)
+[22m-- clean production smoke --
+> savageclash@0.1.0 smoke /tmp/savageclash-clean.c6SYVs
+> node scripts/smoke.mjs
+smoke: production preview ready
+smoke: main title rendered
+smoke: Japanese title/help, playable start, HUD and UI art passed
+smoke: ruinhorn model stage rendered with Japanese details
+smoke: vulkarr model stage rendered with Japanese details
+smoke: OK — production pages, Japanese UI/font, registered assets and enemy models; screenshots in shots/
+[32mubuntu@sandbox:/tmp/savageclash-clean.c6SYVs$ [0m
